@@ -1,0 +1,1854 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Poduri's</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- Navigation -->
+    <nav class="navbar">
+      <div class="nav-container">
+        <h1 class="nav-logo">Poduri's</h1>
+        <div class="nav-menu">
+          <button class="nav-btn active" data-tab="home">Home</button>
+          <button class="nav-btn" data-tab="birthdays">Birthdays</button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Home Page -->
+    <div id="home" class="tab-content active">
+      <!-- Today's Birthdays -->
+      <div id="today-birthdays" class="today-section">
+        <h2>Today's Birthdays 🎉</h2>
+        <div id="birthday-cards" class="birthday-cards"></div>
+      </div>
+
+      <!-- Family Tree Controls -->
+      <div class="tree-controls">
+        <button id="zoom-in" class="control-btn">Zoom In</button>
+        <button id="zoom-out" class="control-btn">Zoom Out</button>
+        <button id="reset-zoom" class="control-btn">Reset</button>
+      </div>
+
+      <!-- Family Tree Container -->
+      <div id="tree-container" class="tree-container">
+        <svg id="tree-svg" class="tree-svg"></svg>
+        <div id="tree-members" class="tree-members"></div>
+      </div>
+    </div>
+
+    <!-- Birthdays Page -->
+    <div id="birthdays" class="tab-content">
+      <div class="calendar-container">
+        <h2>Birthday Calendar</h2>
+        <div id="calendar-grid" class="calendar-grid"></div>
+      </div>
+    </div>
+
+    <!-- Member Detail Modal -->
+    <div id="member-modal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <div id="modal-body"></div>
+      </div>
+    </div>
+
+    <script>
+      // Family data
+      const familyData = {
+        family: [
+          {
+            id: 1,
+            name: "Poduri Appanna",
+            birthDate: "",
+            deathDate: "",
+            gender: "male",
+            parentId: null,
+            spouseId: 2,
+            generation: 1,
+            avatar: "PA",
+          },
+          {
+            id: 2,
+            name: "Poduri Parvati",
+            birthDate: "",
+            deathDate: null,
+            gender: "female",
+            parentId: null,
+            spouseId: 1,
+            generation: 1,
+            avatar: "PP",
+          },
+          {
+            id: 3,
+            name: "Poduri Shesharao",
+            birthDate: "",
+            deathDate: null,
+            gender: "male",
+            parentId: 1,
+            spouseId: 4,
+            generation: 2,
+            avatar: "PS",
+          },
+          {
+            id: 4,
+            name: "Poduri Nagamani",
+            birthDate: "",
+            deathDate: null,
+            gender: "female",
+            parentId: null,
+            spouseId: 3,
+            generation: 2,
+            avatar: "PN",
+          },
+          {
+            id: 5,
+            name: "Poduri Satyanarayana",
+            birthDate: "",
+            deathDate: null,
+            gender: "male",
+            parentId: 1,
+            spouseId: 6,
+            generation: 2,
+            avatar: "PS",
+          },
+          {
+            id: 6,
+            name: "Poduri kameswari",
+            birthDate: "",
+            deathDate: null,
+            gender: "female",
+            parentId: null,
+            spouseId: 5,
+            generation: 2,
+            avatar: "PK",
+          },
+          {
+            id: 7,
+            name: "Poduri Bhaskara Rao",
+            birthDate: "",
+            deathDate: null,
+            gender: "male",
+            parentId: 1,
+            spouseId: 8,
+            generation: 2,
+            avatar: "PB",
+          },
+          {
+            id: 8,
+            name: "Poduri Jaya Kumari",
+            birthDate: "",
+            deathDate: null,
+            gender: "female",
+            parentId: null,
+            spouseId: 7,
+            generation: 2,
+            avatar: "PJK",
+          },
+          {
+            id: 9,
+            name: "Poduri Venkateswara Rao",
+            birthDate: "",
+            deathDate: null,
+            gender: "male",
+            parentId: 1,
+            spouseId: 10,
+            generation: 2,
+            avatar: "PVR",
+          },
+          {
+            id: 10,
+            name: "Poduri Anantha Lakshmi",
+            birthDate: "",
+            deathDate: null,
+            gender: "female",
+            parentId: null,
+            spouseId: 9,
+            generation: 2,
+            avatar: "PAL",
+          },
+          {
+            id: 11,
+            name: "Poduri Krishna",
+            birthDate: "",
+            deathDate: null,
+            gender: "male",
+            parentId: 3,
+            spouseId: 12,
+            generation: 3,
+            avatar: "PK",
+          },
+          {
+            id: 12,
+            name: "Poduri Anjali Devi",
+            birthDate: "",
+            deathDate: null,
+            gender: "female",
+            parentId: null,
+            spouseId: 11,
+            generation: 3,
+            avatar: "PAD",
+          },
+          {
+            id: 13,
+            name: "Poduri Lakshmi Narayana",
+            birthDate: "",
+            deathDate: null,
+            gender: "male",
+            parentId: 3,
+            spouseId: 14,
+            generation: 3,
+            avatar: "PLN",
+          },
+          {
+            id: 14,
+            name: "Poduri Venkata Lakshmi",
+            birthDate: "",
+            deathDate: null,
+            gender: "female",
+            parentId: null,
+            spouseId: 13,
+            generation: 3,
+            avatar: "PVL",
+          },
+          {
+            id: 15,
+            name: "Poduri Malli",
+            birthDate: "",
+            deathDate: null,
+            gender: "male",
+            parentId: 3,
+            spouseId: 16,
+            generation: 3,
+            avatar: "PM",
+          },
+          {
+            id: 16,
+            name: "Poduri Vijaya Lakshmi",
+            birthDate: "",
+            deathDate: null,
+            gender: "female",
+            parentId: null,
+            spouseId: 15,
+            generation: 3,
+            avatar: "PVL",
+          },
+          {
+            id: 17,
+            name: "Poduri Prasad",
+            birthDate: "",
+            deathDate: null,
+            gender: "male",
+            parentId: 5,
+            spouseId: 18,
+            generation: 3,
+            avatar: "PS",
+          },
+          {
+            id: 18,
+            name: "Poduri ",
+            birthDate: "",
+            deathDate: null,
+            gender: "female",
+            parentId: null,
+            spouseId: 17,
+            generation: 3,
+            avatar: "PM",
+          },
+          {
+            id: 19,
+            name: "Poduri Appaji",
+            birthDate: "",
+            deathDate: null,
+            gender: "male",
+            parentId: 5,
+            spouseId: 20,
+            generation: 3,
+            avatar: "PA",
+          },
+          {
+            id: 20,
+            name: "Poduri Naga Maha Lakshmi",
+            birthDate: "",
+            deathDate: null,
+            gender: "male",
+            parentId: null,
+            spouseId: 19,
+            generation: 3,
+            avatar: "PNML",
+          },
+          {
+            id: 21,
+            name: "Poduri Venkata Surya Prakash Rao",
+            birthDate: "1977-12-07",
+            deathDate: null,
+            gender: "male",
+            parentId: 5,
+            spouseId: 22,
+            generation: 3,
+            avatar: "PVSPR",
+          },
+          {
+            id: 22,
+            name: "Poduri Satya Devi",
+            birthDate: "1984-06-24",
+            deathDate: null,
+            gender: "female",
+            parentId: null,
+            spouseId: 21,
+            generation: 3,
+            avatar: "PSD",
+          },
+          {
+            id: 23,
+            name: "Poduri Siva Prasad",
+            birthDate: "",
+            deathDate: null,
+            gender: "male",
+            parentId: 7,
+            spouseId: 24,
+            generation: 3,
+            avatar: "PSP",
+          },
+          {
+            id: 24,
+            name: "Poduri Jaya Lakshmi",
+            birthDate: "",
+            deathDate: null,
+            gender: "female",
+            parentId: null,
+            spouseId: 23,
+            generation: 3,
+            avatar: "PJL",
+          },
+          {
+            id: 25,
+            name: "Poduri Mohan",
+            birthDate: "",
+            deathDate: null,
+            gender: "male",
+            parentId: 7,
+            spouseId: 26,
+            generation: 3,
+            avatar: "PM",
+          },
+          {
+            id: 26,
+            name: "Poduri Lakshmi",
+            birthDate: "",
+            deathDate: null,
+            gender: "female",
+            parentId: null,
+            spouseId: 25,
+            generation: 3,
+            avatar: "PL",
+          },
+          {
+            id: 27,
+            name: "Poduri Appaji",
+            birthDate: "",
+            deathDate: null,
+            gender: "male",
+            parentId: 9,
+            spouseId: 28,
+            generation: 3,
+            avatar: "PA",
+          },
+          {
+            id: 28,
+            name: "Poduri Venkata Lakshmi",
+            birthDate: "",
+            deathDate: null,
+            gender: "female",
+            parentId: null,
+            spouseId: 27,
+            generation: 3,
+            avatar: "PVL",
+          },
+          {
+            id: 29,
+            name: "Poduri Kali",
+            birthDate: "",
+            deathDate: null,
+            gender: "male",
+            parentId: 9,
+            spouseId: 30,
+            generation: 3,
+            avatar: "PK",
+          },
+          {
+            id: 30,
+            name: "Poduri Lavanya",
+            birthDate: "",
+            deathDate: null,
+            gender: "female",
+            parentId: null,
+            spouseId: 29,
+            generation: 3,
+            avatar: "PM",
+          },
+          {
+            id: 31,
+            name: "Poduri Maruti",
+            birthDate: "",
+            deathDate: null,
+            gender: "male",
+            parentId: 9,
+            spouseId: 32,
+            generation: 3,
+            avatar: "PM",
+          },
+          {
+            id: 32,
+            name: "Poduri Bindu Vaishnavi",
+            birthDate: "",
+            deathDate: null,
+            gender: "female",
+            parentId: null,
+            spouseId: 31,
+            generation: 3,
+            avatar: "PBV",
+          },
+          {
+            id: 33,
+            name: "Poduri Lakshmi",
+            birthDate: "",
+            deathDate: null,
+            gender: "male",
+            parentId: 11,
+            spouseId: null,
+            generation: 4,
+            avatar: "PL",
+          },
+          {
+            id: 34,
+            name: "Poduri Kumari",
+            birthDate: "",
+            deathDate: null,
+            gender: "female",
+            parentId: 11,
+            spouseId: null,
+            generation: 4,
+            avatar: "PK",
+          },
+          {
+            id: 35,
+            name: "Poduri Babi",
+            birthDate: "",
+            deathDate: null,
+            gender: "male",
+            parentId: 11,
+            spouseId: 36,
+            generation: 4,
+            avatar: "PM",
+          },
+          {
+            id: 36,
+            name: "Poduri Pavani",
+            birthDate: "",
+            deathDate: null,
+            gender: "female",
+            parentId: null,
+            spouseId: 35,
+            generation: 4,
+            avatar: "PM",
+          },
+          {
+            id: 37,
+            name: "Poduri Mounika",
+            birthDate: "",
+            deathDate: null,
+            gender: "female",
+            parentId: 13,
+            spouseId: null,
+            generation: 4,
+            avatar: "PM",
+          },
+          {
+            id: 38,
+            name: "Poduri Chinni",
+            birthDate: "",
+            deathDate: null,
+            gender: "female",
+            parentId: 13,
+            spouseId: null,
+            generation: 4,
+            avatar: "PC",
+          },
+          {
+            id: 39,
+            name: "Poduri Sravani",
+            birthDate: "",
+            deathDate: null,
+            gender: "female",
+            parentId: 15,
+            spouseId: null,
+            generation: 4,
+            avatar: "PS",
+          },
+          {
+            id: 40,
+            name: "Poduri Durga Devi",
+            birthDate: "",
+            deathDate: null,
+            gender: "female",
+            parentId: 15,
+            spouseId: null,
+            generation: 4,
+            avatar: "PDD",
+          },
+          {
+            id: 41,
+            name: "Poduri Kala",
+            birthDate: "",
+            deathDate: null,
+            gender: "female",
+            parentId: 17,
+            spouseId: null,
+            generation: 4,
+            avatar: "PK",
+          },
+          {
+            id: 42,
+            name: "Poduri Raja Mouli",
+            birthDate: "2004-06-13",
+            deathDate: null,
+            gender: "male",
+            parentId: 17,
+            spouseId: null,
+            generation: 4,
+            avatar: "PRM",
+          },
+          {
+            id: 43,
+            name: "Poduri Manikanta",
+            birthDate: "",
+            deathDate: null,
+            gender: "male",
+            parentId: 19,
+            spouseId: null,
+            generation: 4,
+            avatar: "PM",
+          },
+          {
+            id: 44,
+            name: "Poduri Satya Prakash",
+            birthDate: "2004-09-24",
+            deathDate: null,
+            gender: "male",
+            parentId: 19,
+            spouseId: null,
+            generation: 4,
+            avatar: "PSP",
+          },
+          {
+            id: 45,
+            name: "Poduri Yuvaraj Durga Pavan",
+            birthDate: "2004-11-15",
+            deathDate: null,
+            gender: "male",
+            parentId: 21,
+            spouseId: null,
+            generation: 4,
+            avatar: "PYDP",
+          },
+          {
+            id: 46,
+            name: "Poduri Hari Satyanarayana Murthy",
+            birthDate: "2007-01-31",
+            deathDate: null,
+            gender: "male",
+            parentId: 21,
+            spouseId: null,
+            generation: 4,
+            avatar: "PHSM",
+          },
+          {
+            id: 47,
+            name: "Poduri Tharuni",
+            birthDate: "",
+            deathDate: null,
+            gender: "female",
+            parentId: 23,
+            spouseId: null,
+            generation: 4,
+            avatar: "PT",
+          },
+          {
+            id: 48,
+            name: "Poduri Kesava",
+            birthDate: "",
+            deathDate: null,
+            gender: "female",
+            parentId: 23,
+            spouseId: null,
+            generation: 4,
+            avatar: "PK",
+          },
+          {
+            id: 49,
+            name: "Poduri Sahiti",
+            birthDate: "",
+            deathDate: null,
+            gender: "female",
+            parentId: 25,
+            spouseId: null,
+            generation: 4,
+            avatar: "PS",
+          },
+          {
+            id: 50,
+            name: "Poduri Yaswanth",
+            birthDate: "",
+            deathDate: null,
+            gender: "male",
+            parentId: 25,
+            spouseId: null,
+            generation: 4,
+            avatar: "PY",
+          },
+          {
+            id: 51,
+            name: "Poduri Vinay",
+            birthDate: "",
+            deathDate: null,
+            gender: "male",
+            parentId: 27,
+            spouseId: null,
+            generation: 4,
+            avatar: "PV",
+          },
+          {
+            id: 52,
+            name: "Poduri Kasi Viswanath",
+            birthDate: "",
+            deathDate: null,
+            gender: "male",
+            parentId: 27,
+            spouseId: null,
+            generation: 4,
+            avatar: "PKV",
+          },
+          {
+            id: 53,
+            name: "Poduri Meghana",
+            birthDate: "2015-03-05",
+            deathDate: null,
+            gender: "female",
+            parentId: 29,
+            spouseId: null,
+            generation: 4,
+            avatar: "PM",
+          },
+          {
+            id: 54,
+            name: "Poduri Abhi",
+            birthDate: "2013-07-07",
+            deathDate: null,
+            gender: "male",
+            parentId: 29,
+            spouseId: null,
+            generation: 4,
+            avatar: "PA",
+          },
+          {
+            id: 55,
+            name: "Poduri Jahnavi",
+            birthDate: "2013-12-6",
+            deathDate: null,
+            gender: "female",
+            parentId: 31,
+            spouseId: null,
+            generation: 4,
+            avatar: "PJ",
+          },
+          {
+            id: 56,
+            name: "Poduri Poojya",
+            birthDate: "",
+            deathDate: null,
+            gender: "female",
+            parentId: 35,
+            spouseId: null,
+            generation: 5,
+            avatar: "PP",
+          },
+          {
+            id: 57,
+            name: "Poduri Aadhya",
+            birthDate: "",
+            deathDate: null,
+            gender: "female",
+            parentId: 35,
+            spouseId: null,
+            generation: 5,
+            avatar: "PA",
+          },
+        ],
+      };
+
+      // Global variables
+      let zoomLevel = 1;
+      let panX = 0,
+        panY = 0;
+      let isDragging = false;
+      let dragStart = { x: 0, y: 0 };
+      let treeWidth = 0;
+      let treeHeight = 0;
+
+      // Initialize app
+      document.addEventListener("DOMContentLoaded", function () {
+        initializeNavigation();
+        renderFamilyTree();
+        renderBirthdayCalendar();
+        checkTodaysBirthdays();
+        initializeTreeControls();
+        initializeModal();
+      });
+
+      // Navigation
+      function initializeNavigation() {
+        const navBtns = document.querySelectorAll(".nav-btn");
+        const tabs = document.querySelectorAll(".tab-content");
+
+        navBtns.forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const targetTab = btn.dataset.tab;
+
+            navBtns.forEach((b) => b.classList.remove("active"));
+            tabs.forEach((t) => t.classList.remove("active"));
+
+            btn.classList.add("active");
+            document.getElementById(targetTab).classList.add("active");
+          });
+        });
+      }
+
+      // Calculate age
+      function calculateAge(birthDate, deathDate = null) {
+        const birth = new Date(birthDate);
+        const today = deathDate ? new Date(deathDate) : new Date();
+        return (
+          today.getFullYear() -
+          birth.getFullYear() -
+          (today <
+          new Date(today.getFullYear(), birth.getMonth(), birth.getDate())
+            ? 1
+            : 0)
+        );
+      }
+
+      // Get display text for member
+      function getMemberDisplayText(member) {
+        if (member.deathDate) {
+          const birthYear = new Date(member.birthDate).getFullYear();
+          const deathYear = new Date(member.deathDate).getFullYear();
+          return `${birthYear} - ${deathYear}`;
+        }
+        return `Age ${calculateAge(member.birthDate)}`;
+      }
+
+      // Render family tree
+      function renderFamilyTree() {
+        const container = document.getElementById("tree-members");
+        const svg = document.getElementById("tree-svg");
+
+        container.innerHTML = "";
+        svg.innerHTML = "";
+
+        // Group members by generation
+        const generations = {};
+        familyData.family.forEach((member) => {
+          if (!generations[member.generation]) {
+            generations[member.generation] = [];
+          }
+          generations[member.generation].push(member);
+        });
+
+        // Calculate dynamic dimensions based on family size
+        const generationHeight = 220;
+        const memberWidth = 180;
+        const memberSpacing = 240;
+
+        // Find the generation with the most members to determine tree width
+        const maxMembersInGeneration = Math.max(
+          ...Object.values(generations).map((gen) => gen.length)
+        );
+        treeWidth = Math.max(
+          1200,
+          maxMembersInGeneration * memberSpacing + 400
+        );
+        treeHeight = Math.max(
+          800,
+          Object.keys(generations).length * generationHeight + 200
+        );
+
+        // Position members
+        const positions = {};
+        const sortedGenerations = Object.keys(generations).sort(
+          (a, b) => parseInt(a) - parseInt(b)
+        );
+
+        sortedGenerations.forEach((gen) => {
+          const genMembers = generations[gen];
+          const startX =
+            (treeWidth - (genMembers.length - 1) * memberSpacing) / 2 -
+            memberWidth / 2;
+
+          genMembers.forEach((member, index) => {
+            positions[member.id] = {
+              x: startX + index * memberSpacing,
+              y: (parseInt(gen) - 1) * generationHeight + 100,
+              member: member,
+            };
+          });
+        });
+
+        // Create member cards
+        Object.values(positions).forEach((pos) => {
+          const memberCard = createMemberCard(pos.member);
+          memberCard.style.left = `${pos.x}px`;
+          memberCard.style.top = `${pos.y}px`;
+          memberCard.style.position = "absolute";
+          container.appendChild(memberCard);
+        });
+
+        // Set container and SVG dimensions
+        container.style.width = `${treeWidth}px`;
+        container.style.height = `${treeHeight}px`;
+        container.style.position = "relative";
+
+        svg.style.width = `${treeWidth}px`;
+        svg.style.height = `${treeHeight}px`;
+        svg.style.position = "absolute";
+        svg.style.top = "0";
+        svg.style.left = "0";
+        svg.style.pointerEvents = "none";
+        svg.setAttribute("width", treeWidth);
+        svg.setAttribute("height", treeHeight);
+
+        // Draw connections
+        drawConnections(svg, positions);
+
+        // Enable panning
+        enablePanning();
+      }
+
+      // Create member card
+      function createMemberCard(member) {
+        const card = document.createElement("div");
+        card.className = "member-card";
+        card.onclick = () => showMemberDetails(member);
+
+        const avatar = document.createElement("div");
+        avatar.className = "member-avatar";
+        avatar.textContent = member.avatar;
+
+        const name = document.createElement("div");
+        name.className = "member-name";
+        name.textContent = member.name;
+
+        const info = document.createElement("div");
+        info.className = "member-info";
+        info.textContent = getMemberDisplayText(member);
+
+        card.appendChild(avatar);
+        card.appendChild(name);
+        card.appendChild(info);
+
+        return card;
+      }
+
+      // Draw connections between family members
+      function drawConnections(svg, positions) {
+        // Clear existing connections
+        svg.innerHTML = "";
+
+        // Draw parent-child connections
+        familyData.family.forEach((member) => {
+          if (
+            member.parentId &&
+            positions[member.parentId] &&
+            positions[member.id]
+          ) {
+            const parentPos = positions[member.parentId];
+            const childPos = positions[member.id];
+
+            // Calculate connection points (center of cards)
+            const startX = parentPos.x + 90; // Center of parent card (assuming 180px width)
+            const startY = parentPos.y + 120; // Bottom of parent card
+            const endX = childPos.x + 90; // Center of child card
+            const endY = childPos.y; // Top of child card
+
+            // Create curved path for better visual appeal
+            const midY = startY + (endY - startY) / 2;
+
+            const path = document.createElementNS(
+              "http://www.w3.org/2000/svg",
+              "path"
+            );
+            const pathData = `M ${startX} ${startY} L ${startX} ${midY} L ${endX} ${midY} L ${endX} ${endY}`;
+
+            path.setAttribute("d", pathData);
+            path.setAttribute("stroke", "black");
+            path.setAttribute("stroke-width", "2");
+            path.setAttribute("fill", "none");
+            path.setAttribute("stroke-linecap", "round");
+            path.className = "connection-line";
+
+            svg.appendChild(path);
+          }
+        });
+
+        // Draw spouse connections
+        const processedSpouses = new Set();
+
+        familyData.family.forEach((member) => {
+          if (
+            member.spouseId &&
+            positions[member.spouseId] &&
+            positions[member.id]
+          ) {
+            const spouseKey = [member.id, member.spouseId].sort().join("-");
+
+            if (!processedSpouses.has(spouseKey)) {
+              processedSpouses.add(spouseKey);
+
+              const pos1 = positions[member.id];
+              const pos2 = positions[member.spouseId];
+
+              const line = document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "line"
+              );
+              line.setAttribute("x1", pos1.x + 90);
+              line.setAttribute("y1", pos1.y + 60);
+              line.setAttribute("x2", pos2.x + 90);
+              line.setAttribute("y2", pos2.y + 60);
+              line.setAttribute("stroke", "#e74c3c");
+              line.setAttribute("stroke-width", "3");
+              line.setAttribute("stroke-linecap", "round");
+              line.className = "spouse-line";
+
+              svg.appendChild(line);
+            }
+          }
+        });
+      }
+
+      // Tree controls
+      function initializeTreeControls() {
+        document.getElementById("zoom-in").onclick = () => {
+          zoomLevel *= 1.2;
+          applyTransform();
+        };
+
+        document.getElementById("zoom-out").onclick = () => {
+          zoomLevel /= 1.2;
+          applyTransform();
+        };
+
+        document.getElementById("reset-zoom").onclick = () => {
+          zoomLevel = 1;
+          panX = 0;
+          panY = 0;
+          applyTransform();
+        };
+      }
+
+      // Enable panning
+      function enablePanning() {
+        const container = document.getElementById("tree-container");
+
+        container.addEventListener("mousedown", (e) => {
+          // Don't start panning if clicking on a member card
+          if (e.target.closest(".member-card")) {
+            return;
+          }
+
+          isDragging = true;
+          dragStart = { x: e.clientX - panX, y: e.clientY - panY };
+          container.style.cursor = "grabbing";
+          e.preventDefault();
+        });
+
+        container.addEventListener("mousemove", (e) => {
+          if (isDragging) {
+            panX = e.clientX - dragStart.x;
+            panY = e.clientY - dragStart.y;
+            applyTransform();
+          }
+        });
+
+        container.addEventListener("mouseup", () => {
+          isDragging = false;
+          container.style.cursor = "grab";
+        });
+
+        container.addEventListener("mouseleave", () => {
+          isDragging = false;
+          container.style.cursor = "grab";
+        });
+
+        container.addEventListener("wheel", (e) => {
+          e.preventDefault();
+          const delta = e.deltaY > 0 ? 0.9 : 1.1;
+          const rect = container.getBoundingClientRect();
+          const mouseX = e.clientX - rect.left;
+          const mouseY = e.clientY - rect.top;
+
+          // Zoom towards mouse position
+          const oldZoom = zoomLevel;
+          zoomLevel *= delta;
+
+          // Adjust pan to zoom towards mouse
+          panX = mouseX - (mouseX - panX) * (zoomLevel / oldZoom);
+          panY = mouseY - (mouseY - panY) * (zoomLevel / oldZoom);
+
+          applyTransform();
+        });
+
+        // Set initial cursor
+        container.style.cursor = "grab";
+      }
+
+      // Apply transform
+      function applyTransform() {
+        const treeMembers = document.getElementById("tree-members");
+        const treeSvg = document.getElementById("tree-svg");
+
+        const transform = `translate(${panX}px, ${panY}px) scale(${zoomLevel})`;
+        treeMembers.style.transform = transform;
+        treeSvg.style.transform = transform;
+
+        // Update transform origin for better scaling
+        treeMembers.style.transformOrigin = "0 0";
+        treeSvg.style.transformOrigin = "0 0";
+      }
+
+      // Check today's birthdays
+      function checkTodaysBirthdays() {
+        const today = new Date();
+        const todayStr = `${String(today.getMonth() + 1).padStart(
+          2,
+          "0"
+        )}-${String(today.getDate()).padStart(2, "0")}`;
+
+        const birthdayMembers = familyData.family.filter((member) => {
+          const birthDate = new Date(member.birthDate);
+          const birthStr = `${String(birthDate.getMonth() + 1).padStart(
+            2,
+            "0"
+          )}-${String(birthDate.getDate()).padStart(2, "0")}`;
+          return birthStr === todayStr && !member.deathDate;
+        });
+
+        const container = document.getElementById("birthday-cards");
+        container.innerHTML = "";
+
+        if (birthdayMembers.length > 0) {
+          document.getElementById("today-birthdays").style.display = "block";
+          birthdayMembers.forEach((member, index) => {
+            const card = createBirthdayCard(member);
+            card.style.animationDelay = `${index * 0.2}s`;
+            container.appendChild(card);
+          });
+        } else {
+          document.getElementById("today-birthdays").style.display = "none";
+        }
+      }
+
+      // Create birthday card
+      function createBirthdayCard(member) {
+        const card = document.createElement("div");
+        card.className = "birthday-card";
+        card.onclick = () => showMemberDetails(member);
+
+        card.innerHTML = `
+    <div class="birthday-avatar">${member.avatar}</div>
+    <div class="birthday-info">
+        <h3>${member.name}</h3>
+        <p>Turns ${calculateAge(member.birthDate) + 1} today!</p>
+    </div>
+  `;
+
+        return card;
+      }
+
+      // Render birthday calendar
+      function renderBirthdayCalendar() {
+        const container = document.getElementById("calendar-grid");
+        container.innerHTML = "";
+
+        // Create calendar for current year
+        const currentYear = new Date().getFullYear();
+        const today = new Date();
+        const currentMonth = today.getMonth();
+        const currentDay = today.getDate();
+
+        const months = [
+          "January",
+          "February",
+          "March",
+          "April",
+          "May",
+          "June",
+          "July",
+          "August",
+          "September",
+          "October",
+          "November",
+          "December",
+        ];
+
+        months.forEach((month, monthIndex) => {
+          const monthContainer = document.createElement("div");
+          monthContainer.className = "calendar-month";
+
+          const monthHeader = document.createElement("h3");
+          monthHeader.textContent = month;
+          monthContainer.appendChild(monthHeader);
+
+          const daysGrid = document.createElement("div");
+          daysGrid.className = "days-grid";
+
+          const daysInMonth = new Date(
+            currentYear,
+            monthIndex + 1,
+            0
+          ).getDate();
+
+          for (let day = 1; day <= daysInMonth; day++) {
+            const dayElement = document.createElement("div");
+            dayElement.className = "calendar-day";
+            dayElement.textContent = day;
+
+            // Check if this is today's date
+            if (monthIndex === currentMonth && day === currentDay) {
+              dayElement.classList.add("current-day");
+            }
+
+            // Check for birthdays on this date
+            const dateStr = `${currentYear}-${String(monthIndex + 1).padStart(
+              2,
+              "0"
+            )}-${String(day).padStart(2, "0")}`;
+            const birthdaysOnDate = familyData.family.filter((member) => {
+              const birthDate = new Date(member.birthDate);
+              return (
+                birthDate.getMonth() === monthIndex &&
+                birthDate.getDate() === day
+              );
+            });
+
+            if (birthdaysOnDate.length > 0) {
+              dayElement.classList.add("has-birthday");
+              dayElement.onclick = () =>
+                showBirthdayDetails(birthdaysOnDate, `${month} ${day}`);
+            }
+
+            daysGrid.appendChild(dayElement);
+          }
+
+          monthContainer.appendChild(daysGrid);
+          container.appendChild(monthContainer);
+        });
+      }
+
+      // Show member details modal
+      function showMemberDetails(member) {
+        const modal = document.getElementById("member-modal");
+        const modalBody = document.getElementById("modal-body");
+
+        const age = member.deathDate
+          ? `Lived ${calculateAge(member.birthDate, member.deathDate)} years`
+          : `Age ${calculateAge(member.birthDate)}`;
+
+        modalBody.innerHTML = `
+    <div class="modal-member">
+        <div class="modal-avatar">${member.avatar}</div>
+        <h2>${member.name}</h2>
+        <p><strong>Born:</strong> ${new Date(
+          member.birthDate
+        ).toLocaleDateString()}</p>
+        ${
+          member.deathDate
+            ? `<p><strong>Died:</strong> ${new Date(
+                member.deathDate
+              ).toLocaleDateString()}</p>`
+            : ""
+        }
+        <p><strong>${member.deathDate ? "Lived" : "Age"}:</strong> ${age}</p>
+        <p><strong>Generation:</strong> ${member.generation}</p>
+    </div>
+  `;
+
+        modal.style.display = "block";
+        modal.classList.add("show");
+      }
+
+      // Show birthday details
+      function showBirthdayDetails(members, date) {
+        const modal = document.getElementById("member-modal");
+        const modalBody = document.getElementById("modal-body");
+
+        let content = `<h2>Birthdays on ${date}</h2>`;
+        members.forEach((member) => {
+          const age = member.deathDate
+            ? `Would be ${calculateAge(member.birthDate)} years old`
+            : `Turns ${calculateAge(member.birthDate) + 1}`;
+
+          content += `
+        <div class="modal-member">
+            <div class="modal-avatar">${member.avatar}</div>
+            <h3>${member.name}</h3>
+            <p>${age}</p>
+        </div>
+    `;
+        });
+
+        modalBody.innerHTML = content;
+        modal.style.display = "block";
+        modal.classList.add("show");
+      }
+
+      // Initialize modal
+      function initializeModal() {
+        const modal = document.getElementById("member-modal");
+        const closeBtn = document.querySelector(".close");
+
+        closeBtn.onclick = () => {
+          modal.classList.remove("show");
+          setTimeout(() => {
+            modal.style.display = "none";
+          }, 300);
+        };
+
+        window.onclick = (e) => {
+          if (e.target === modal) {
+            modal.classList.remove("show");
+            setTimeout(() => {
+              modal.style.display = "none";
+            }, 300);
+          }
+        };
+      }
+    </script>
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Arial", sans-serif;
+        background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+        color: #333;
+        overflow-x: hidden;
+        background-color: black;
+      }
+
+      /* Navigation */
+      .navbar {
+        background: linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 100%);
+        padding: 1rem 0;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+      }
+
+      .nav-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 2rem;
+      }
+
+      .nav-logo {
+        color: white;
+        font-size: 1.8rem;
+        font-weight: bold;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .nav-menu {
+        display: flex;
+        gap: 1rem;
+      }
+
+      .nav-btn {
+        background: transparent;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        padding: 0.8rem 1.5rem;
+        border-radius: 25px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .nav-btn::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent
+        );
+        transition: left 0.5s;
+      }
+
+      .nav-btn:hover::before {
+        left: 100%;
+      }
+
+      .nav-btn:hover {
+        border-color: white;
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+      }
+
+      .nav-btn.active {
+        background: white;
+        color: #333;
+        border-color: white;
+        box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
+      }
+
+      /* Tab Content */
+      .tab-content {
+        display: none;
+        padding-top: 100px;
+        min-height: 100vh;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.5s ease;
+      }
+
+      .tab-content.active {
+        display: block;
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* Today's Birthdays */
+      .today-section {
+        background: linear-gradient(135deg, #ffffff 0%, #f8f8f8 100%);
+        margin: 2rem;
+        padding: 2rem;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+      }
+
+      .today-section h2 {
+        text-align: center;
+        margin-bottom: 2rem;
+        color: #333;
+        font-size: 2rem;
+        position: relative;
+      }
+
+      .today-section h2::after {
+        content: "";
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100px;
+        height: 3px;
+        background: linear-gradient(90deg, #333, #666);
+        border-radius: 2px;
+      }
+
+      .birthday-cards {
+        display: flex;
+        gap: 2rem;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .birthday-card {
+        background: linear-gradient(135deg, #ffffff 0%, #f5f5f5 100%);
+        border: 2px solid #333;
+        border-radius: 15px;
+        padding: 1.5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        animation: slideInUp 0.6s ease both;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .birthday-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(0, 0, 0, 0.1),
+          transparent
+        );
+        transition: left 0.5s;
+      }
+
+      .birthday-card:hover::before {
+        left: 100%;
+      }
+
+      .birthday-card:hover {
+        transform: translateY(-10px) scale(1.05);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        border-color: #000;
+      }
+
+      .birthday-avatar {
+        font-size: 3rem;
+        animation: bounce 2s infinite;
+      }
+
+      .birthday-info h3 {
+        margin-bottom: 0.5rem;
+        color: #333;
+      }
+
+      .birthday-info p {
+        color: #666;
+        font-style: italic;
+      }
+
+      /* Tree Controls */
+      .tree-controls {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin: 2rem;
+      }
+
+      .control-btn {
+        background: linear-gradient(135deg, #333 0%, #555 100%);
+        color: white;
+        border: none;
+        padding: 0.8rem 1.5rem;
+        border-radius: 25px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .control-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        background: linear-gradient(135deg, #555 0%, #333 100%);
+      }
+
+      /* Family Tree */
+      .tree-container {
+        position: relative;
+        height: 600px;
+        overflow: hidden;
+        cursor: grab;
+        background-size: 20px 20px;
+        background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+        border-radius: 20px;
+        margin: 2rem;
+        box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.1);
+      }
+
+      .tree-container:active {
+        cursor: grabbing;
+      }
+
+      .tree-members {
+        position: absolute;
+        top: 0;
+        left: 0;
+        transition: transform 0.3s ease;
+      }
+
+      .tree-svg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        transition: transform 0.3s ease;
+      }
+
+      .member-card {
+        position: absolute;
+        background: linear-gradient(135deg, #ffffff 0%, #f8f8f8 100%);
+        border: 2px solid #333;
+        border-radius: 15px;
+        padding: 1rem;
+        width: 160px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        transform-origin: center;
+      }
+
+      .member-card:hover {
+        transform: scale(1.1) translateY(-10px);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        border-color: #000;
+        z-index: 100;
+      }
+
+      .member-avatar {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+        animation: float 3s ease-in-out infinite;
+      }
+
+      .member-name {
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+      }
+
+      .member-info {
+        color: #666;
+        font-size: 0.8rem;
+      }
+
+      /* Connection Lines */
+      .connection-line {
+        transition: all 0.3s ease;
+      }
+
+      .connection-line:hover {
+        stroke-width: 4;
+        stroke: #000;
+      }
+
+      .spouse-line {
+        transition: all 0.3s ease;
+      }
+
+      .spouse-line:hover {
+        stroke-width: 5;
+        stroke: #000;
+      }
+
+      /* Birthday Calendar */
+      .calendar-container {
+        padding: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .calendar-container h2 {
+        text-align: center;
+        margin-bottom: 3rem;
+        color: #333;
+        font-size: 2.5rem;
+        position: relative;
+      }
+
+      .calendar-container h2::after {
+        content: "";
+        position: absolute;
+        bottom: -15px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 150px;
+        height: 4px;
+        background: linear-gradient(90deg, #333, #666);
+        border-radius: 2px;
+      }
+
+      .calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+      }
+
+      .calendar-month {
+        background: linear-gradient(135deg, #ffffff 0%, #f8f8f8 100%);
+        border-radius: 20px;
+        padding: 1.5rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+      }
+
+      .calendar-month:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      }
+
+      .calendar-month h3 {
+        text-align: center;
+        margin-bottom: 1rem;
+        color: #333;
+        font-size: 1.3rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #333;
+      }
+
+      .days-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 0.3rem;
+      }
+
+      .calendar-day {
+        aspect-ratio: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+        font-weight: 500;
+        position: relative;
+        background: rgba(0, 0, 0, 0.02);
+      }
+
+      .calendar-day:hover {
+        background: rgba(0, 0, 0, 0.1);
+        transform: scale(1.1);
+      }
+
+      .calendar-day.has-birthday {
+        background: linear-gradient(135deg, #333 0%, #555 100%);
+        color: white;
+        font-weight: bold;
+        animation: pulse 2s infinite;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      }
+
+      .calendar-day.has-birthday:hover {
+        background: linear-gradient(135deg, #000 0%, #333 100%);
+        transform: scale(1.2);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+      }
+
+      .calendar-day.has-birthday::after {
+        content: "🎂";
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        font-size: 0.7rem;
+        animation: bounce 1s infinite;
+      }
+
+      /* Modal */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 2000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(5px);
+        opacity: 0;
+        transition: all 0.3s ease;
+      }
+
+      .modal.show {
+        opacity: 1;
+      }
+
+      .modal-content {
+        background: linear-gradient(135deg, #ffffff 0%, #f8f8f8 100%);
+        margin: 5% auto;
+        padding: 2rem;
+        border-radius: 20px;
+        width: 90%;
+        max-width: 500px;
+        position: relative;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        transform: scale(0.7);
+        transition: all 0.3s ease;
+        border: 2px solid #333;
+      }
+
+      .modal.show .modal-content {
+        transform: scale(1);
+      }
+
+      .close {
+        color: #333;
+        float: right;
+        font-size: 2rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: absolute;
+        right: 1rem;
+        top: 1rem;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: rgba(0, 0, 0, 0.1);
+      }
+
+      .close:hover {
+        background: rgba(0, 0, 0, 0.2);
+        transform: rotate(90deg);
+      }
+
+      .modal-member {
+        text-align: center;
+        padding: 1rem;
+      }
+
+      .modal-avatar {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        animation: bounce 1s ease-in-out;
+      }
+
+      .modal-member h2 {
+        color: #333;
+        margin-bottom: 1rem;
+        font-size: 1.8rem;
+      }
+
+      .modal-member h3 {
+        color: #333;
+        margin-bottom: 0.5rem;
+        font-size: 1.3rem;
+      }
+
+      .modal-member p {
+        color: #666;
+        margin-bottom: 0.5rem;
+        font-size: 1rem;
+      }
+
+      /* Animations */
+      @keyframes slideInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes bounce {
+        0%,
+        20%,
+        53%,
+        80%,
+        100% {
+          transform: translateY(0);
+        }
+        40%,
+        43% {
+          transform: translateY(-10px);
+        }
+        70% {
+          transform: translateY(-5px);
+        }
+        90% {
+          transform: translateY(-3px);
+        }
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+      }
+
+      @keyframes pulse {
+        0% {
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        50% {
+          box-shadow: 0 4px 25px rgba(0, 0, 0, 0.5);
+        }
+        100% {
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .nav-container {
+          flex-direction: column;
+          gap: 1rem;
+          padding: 1rem;
+        }
+
+        .calendar-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .tree-container {
+          height: 400px;
+          margin: 1rem;
+        }
+
+        .today-section {
+          margin: 1rem;
+          padding: 1rem;
+        }
+
+        .birthday-cards {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .modal-content {
+          width: 95%;
+          margin: 10% auto;
+        }
+      }
+      .calendar-day.current-day {
+        background-color: #e74c3c;
+        color: white;
+        font-weight: bold;
+        border: 2px solid #c0392b;
+      }
+
+      /* If the current day also has a birthday, you might want to style it differently */
+      .calendar-day.current-day.has-birthday {
+        background-color: #8e44ad; /* Purple for current day with birthday */
+        border: 2px solid #732d91;
+      }
+    </style>
+  </body>
+</html>
