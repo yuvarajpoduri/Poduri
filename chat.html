@@ -71,6 +71,7 @@
 
     .message {
       margin-bottom: 12px;
+      word-wrap: break-word;
     }
 
     .message strong {
@@ -82,6 +83,14 @@
       .chat-container {
         margin: 10px;
         width: calc(100% - 20px);
+      }
+
+      .chat-input input {
+        font-size: 14px;
+      }
+
+      .chat-input button {
+        font-size: 14px;
       }
     }
   </style>
@@ -100,13 +109,28 @@
     const messagesBox = document.getElementById("chatMessages");
     const messageInput = document.getElementById("messageInput");
 
-    // Try to get a pseudo device name
+    // Detect device name
     const deviceName = navigator.userAgent.includes("Android")
       ? "Android User"
       : navigator.userAgent.includes("iPhone")
       ? "iPhone User"
       : "Web User";
 
+    // Load old messages from localStorage
+    function loadMessages() {
+      const saved = localStorage.getItem("familyChatMessages");
+      if (saved) {
+        messagesBox.innerHTML = saved;
+        messagesBox.scrollTop = messagesBox.scrollHeight;
+      }
+    }
+
+    // Save messages to localStorage
+    function saveMessages() {
+      localStorage.setItem("familyChatMessages", messagesBox.innerHTML);
+    }
+
+    // Send message
     function sendMessage() {
       const msg = messageInput.value.trim();
       if (!msg) return;
@@ -118,12 +142,16 @@
       messagesBox.scrollTop = messagesBox.scrollHeight;
 
       messageInput.value = "";
+      saveMessages();
     }
 
-    // Optional: Send on Enter
+    // Enter key shortcut
     messageInput.addEventListener("keydown", (e) => {
       if (e.key === "Enter") sendMessage();
     });
+
+    // Init
+    loadMessages();
   </script>
 </body>
 </html>
