@@ -698,6 +698,8 @@
       let dragStart = { x: 0, y: 0 };
       let treeWidth = 0;
       let treeHeight = 0;
+      let touchStartTime = 0;
+      let touchMoved = false;
 
       // Initialize app
       document.addEventListener("DOMContentLoaded", function () {
@@ -940,12 +942,55 @@
       function createMemberCard(member) {
         const card = document.createElement("div");
         card.className = "member-card";
-        card.onclick = () => showMemberDetails(member);
 
+        // Enhanced click handler for better mobile support
+        let cardTouchStartTime = 0;
+        let cardTouchMoved = false;
+        let cardTouchStartPos = { x: 0, y: 0 };
+
+        // Mouse click for desktop
+        card.addEventListener("click", (e) => {
+          e.stopPropagation();
+          showMemberDetails(member);
+        });
+
+        // Touch events for mobile - more reliable than onclick
+        card.addEventListener("touchstart", (e) => {
+          cardTouchStartTime = Date.now();
+          cardTouchMoved = false;
+          const touch = e.touches[0];
+          cardTouchStartPos = { x: touch.clientX, y: touch.clientY };
+          e.stopPropagation(); // Prevent container touch events
+        });
+
+        card.addEventListener("touchmove", (e) => {
+          const touch = e.touches[0];
+          const moveDistance = Math.sqrt(
+            Math.pow(touch.clientX - cardTouchStartPos.x, 2) +
+              Math.pow(touch.clientY - cardTouchStartPos.y, 2)
+          );
+
+          if (moveDistance > 10) {
+            // 10px threshold
+            cardTouchMoved = true;
+          }
+        });
+
+        card.addEventListener("touchend", (e) => {
+          const touchDuration = Date.now() - cardTouchStartTime;
+
+          // Only trigger if it was a quick tap without much movement
+          if (!cardTouchMoved && touchDuration < 500) {
+            e.preventDefault();
+            e.stopPropagation();
+            showMemberDetails(member);
+          }
+        });
+
+        // Keep your existing avatar, name, info code exactly as is
         const avatar = document.createElement("div");
         avatar.className = "member-avatar";
 
-        // Check if avatar is a URL (contains http/https) or text
         if (
           member.avatar &&
           (member.avatar.startsWith("http://") ||
@@ -977,7 +1022,6 @@
 
         return card;
       }
-
       // CSS for avatar images
       function initializeTreeControls() {
         document.getElementById("zoom-in").onclick = () => {
@@ -1084,42 +1128,43 @@
         });
 
         // Touch events for mobile
+        // Replace your existing touchstart event with this:
         container.addEventListener("touchstart", (e) => {
+          // Don't prevent default if touching a member card
+          if (e.target.closest(".member-card")) {
+            return; // Let the card handle its own touch events
+          }
+
           e.preventDefault();
           touches = Array.from(e.touches);
+          touchStartTime = Date.now();
+          touchMoved = false;
 
           if (touches.length === 1) {
-            // Single touch - start panning
-            if (!e.target.closest(".member-card")) {
-              isDragging = true;
-              dragStart = {
-                x: touches[0].clientX - panX,
-                y: touches[0].clientY - panY,
-              };
-              lastPosition = { x: touches[0].clientX, y: touches[0].clientY };
-              lastMoveTime = Date.now();
-              velocity = { x: 0, y: 0 };
-              container.classList.add("dragging");
-            }
+            isDragging = true;
+            dragStart = {
+              x: touches[0].clientX - panX,
+              y: touches[0].clientY - panY,
+            };
+            lastPosition = { x: touches[0].clientX, y: touches[0].clientY };
+            lastMoveTime = Date.now();
+            velocity = { x: 0, y: 0 };
+            container.classList.add("dragging");
           } else if (touches.length === 2) {
-            // Two touches - prepare for pinch zoom
             isDragging = false;
             container.classList.remove("dragging");
             const rect = container.getBoundingClientRect();
 
-            // Calculate distance between touches
             const dx = touches[1].clientX - touches[0].clientX;
             const dy = touches[1].clientY - touches[0].clientY;
             lastDistance = Math.sqrt(dx * dx + dy * dy);
 
-            // Calculate center point between touches
             lastCenter = {
               x: (touches[0].clientX + touches[1].clientX) / 2 - rect.left,
               y: (touches[0].clientY + touches[1].clientY) / 2 - rect.top,
             };
           }
         });
-
         container.addEventListener("touchmove", (e) => {
           e.preventDefault();
           touches = Array.from(e.touches);
