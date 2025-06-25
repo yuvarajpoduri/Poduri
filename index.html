@@ -172,8 +172,8 @@
           },
           {
             id: 11,
-            name: "Poduri Krishna",
-            birthDate: "",
+            name: "Poduri Rama Krishna",
+            birthDate: "1964-11-12",
             deathDate: null,
             gender: "male",
             parentId: 3,
@@ -184,7 +184,7 @@
           {
             id: 12,
             name: "Poduri Anjali Devi",
-            birthDate: "",
+            birthDate: "1969-08-11",
             deathDate: null,
             gender: "female",
             parentId: null,
@@ -195,7 +195,7 @@
           {
             id: 13,
             name: "Poduri Lakshmi Narayana",
-            birthDate: "",
+            birthDate: "1973-09-19",
             deathDate: null,
             gender: "male",
             parentId: 3,
@@ -206,7 +206,7 @@
           {
             id: 14,
             name: "Poduri Venkata Lakshmi",
-            birthDate: "",
+            birthDate: "1982-05-25",
             deathDate: null,
             gender: "female",
             parentId: null,
@@ -216,7 +216,7 @@
           },
           {
             id: 15,
-            name: "Poduri Malli",
+            name: "Poduri Veera Venkata Mallikarjuna Rao",
             birthDate: "",
             deathDate: null,
             gender: "male",
@@ -249,7 +249,7 @@
           },
           {
             id: 18,
-            name: "Poduri ",
+            name: "Poduri Vara Lakshmi",
             birthDate: "",
             deathDate: null,
             gender: "female",
@@ -393,7 +393,7 @@
           {
             id: 31,
             name: "Poduri Maruti",
-            birthDate: "",
+            birthDate: "1981-10-09",
             deathDate: null,
             gender: "male",
             parentId: 9,
@@ -403,8 +403,8 @@
           },
           {
             id: 32,
-            name: "Poduri Bindu Vaishnavi",
-            birthDate: "",
+            name: "Poduri Bharathi Devi",
+            birthDate: "1987-06-23",
             deathDate: null,
             gender: "female",
             parentId: null,
@@ -415,7 +415,7 @@
           {
             id: 33,
             name: "Poduri Lakshmi",
-            birthDate: "",
+            birthDate: "1991-03-06",
             deathDate: null,
             gender: "male",
             parentId: 11,
@@ -426,7 +426,7 @@
           {
             id: 34,
             name: "Poduri Kumari",
-            birthDate: "",
+            birthDate: "1989-01-20",
             deathDate: null,
             gender: "female",
             parentId: 11,
@@ -436,8 +436,8 @@
           },
           {
             id: 35,
-            name: "Poduri Babi",
-            birthDate: "",
+            name: "Poduri Seshu Kumar",
+            birthDate: "1993-02-01",
             deathDate: null,
             gender: "male",
             parentId: 11,
@@ -448,7 +448,7 @@
           {
             id: 36,
             name: "Poduri Pavani",
-            birthDate: "",
+            birthDate: "1997-01-01",
             deathDate: null,
             gender: "female",
             parentId: null,
@@ -459,7 +459,7 @@
           {
             id: 37,
             name: "Poduri Mounika",
-            birthDate: "",
+            birthDate: "1999-06-28",
             deathDate: null,
             gender: "female",
             parentId: 13,
@@ -469,8 +469,8 @@
           },
           {
             id: 38,
-            name: "Poduri Chinni",
-            birthDate: "",
+            name: "Poduri Sai Lakshmi",
+            birthDate: "2002-02-06",
             deathDate: null,
             gender: "female",
             parentId: 13,
@@ -641,7 +641,7 @@
             parentId: 29,
             spouseId: null,
             generation: 4,
-            avatar: "PM",
+            avatar: "",
           },
           {
             id: 54,
@@ -667,8 +667,8 @@
           },
           {
             id: 56,
-            name: "Poduri Poojya",
-            birthDate: "",
+            name: "Poduri Pujya",
+            birthDate: "2019-03-22",
             deathDate: null,
             gender: "female",
             parentId: 35,
@@ -678,14 +678,14 @@
           },
           {
             id: 57,
-            name: "Poduri Aadhya",
-            birthDate: "",
+            name: "Poduri Chanya",
+            birthDate: "2023-08-12",
             deathDate: null,
             gender: "female",
             parentId: 35,
             spouseId: null,
             generation: 5,
-            avatar: "PA",
+            avatar: "",
           },
         ],
       };
@@ -838,34 +838,20 @@
       }
 
       // Create member card
-      function createMemberCard(member) {
-        const card = document.createElement("div");
-        card.className = "member-card";
-        card.onclick = () => showMemberDetails(member);
-
-        const avatar = document.createElement("div");
-        avatar.className = "member-avatar";
-        avatar.textContent = member.avatar;
-
-        const name = document.createElement("div");
-        name.className = "member-name";
-        name.textContent = member.name;
-
-        const info = document.createElement("div");
-        info.className = "member-info";
-        info.textContent = getMemberDisplayText(member);
-
-        card.appendChild(avatar);
-        card.appendChild(name);
-        card.appendChild(info);
-
-        return card;
-      }
-
       // Draw connections between family members
       function drawConnections(svg, positions) {
         // Clear existing connections
         svg.innerHTML = "";
+
+        const childrenByParent = {};
+        familyData.family.forEach((member) => {
+          if (member.parentId) {
+            if (!childrenByParent[member.parentId]) {
+              childrenByParent[member.parentId] = [];
+            }
+            childrenByParent[member.parentId].push(member);
+          }
+        });
 
         // Draw parent-child connections
         familyData.family.forEach((member) => {
@@ -877,27 +863,38 @@
             const parentPos = positions[member.parentId];
             const childPos = positions[member.id];
 
-            // Calculate connection points (center of cards)
-            const startX = parentPos.x + 90; // Center of parent card (assuming 180px width)
+            const startX = parentPos.x + 90; // Center of parent card
             const startY = parentPos.y + 120; // Bottom of parent card
             const endX = childPos.x + 90; // Center of child card
             const endY = childPos.y; // Top of child card
 
-            // Create curved path for better visual appeal
-            const midY = startY + (endY - startY) / 2;
+            const siblings = childrenByParent[member.parentId];
+            const childIndex = siblings.findIndex(
+              (child) => child.id === member.id
+            );
+            const totalSiblings = siblings.length;
+
+            // Offset value spreads the curves horizontally
+            const curveOffset = (childIndex - (totalSiblings - 1) / 2) * 30;
+
+            // Bezier control points for a smoother, spread-out curve
+            const controlPoint1X = startX + curveOffset;
+            const controlPoint1Y = startY + 40;
+            const controlPoint2X = endX + curveOffset;
+            const controlPoint2Y = endY - 40;
 
             const path = document.createElementNS(
               "http://www.w3.org/2000/svg",
               "path"
             );
-            const pathData = `M ${startX} ${startY} L ${startX} ${midY} L ${endX} ${midY} L ${endX} ${endY}`;
+            const pathData = `M ${startX} ${startY} C ${controlPoint1X} ${controlPoint1Y}, ${controlPoint2X} ${controlPoint2Y}, ${endX} ${endY}`;
 
             path.setAttribute("d", pathData);
             path.setAttribute("stroke", "#4a90e2");
             path.setAttribute("stroke-width", "2");
             path.setAttribute("fill", "none");
             path.setAttribute("stroke-linecap", "round");
-            path.className = "connection-line";
+            path.classList.add("connection-line");
 
             svg.appendChild(path);
           }
@@ -931,7 +928,7 @@
               line.setAttribute("stroke", "#e74c3c");
               line.setAttribute("stroke-width", "3");
               line.setAttribute("stroke-linecap", "round");
-              line.className = "spouse-line";
+              line.classList.add("spouse-line");
 
               svg.appendChild(line);
             }
@@ -939,7 +936,49 @@
         });
       }
 
-      // Tree controls
+      // Create member card with image support
+      function createMemberCard(member) {
+        const card = document.createElement("div");
+        card.className = "member-card";
+        card.onclick = () => showMemberDetails(member);
+
+        const avatar = document.createElement("div");
+        avatar.className = "member-avatar";
+
+        // Check if avatar is a URL (contains http/https) or text
+        if (
+          member.avatar &&
+          (member.avatar.startsWith("http://") ||
+            member.avatar.startsWith("https://"))
+        ) {
+          const img = document.createElement("img");
+          img.src = member.avatar;
+          img.alt = member.name;
+          img.style.width = "100%";
+          img.style.height = "100%";
+          img.style.objectFit = "cover";
+          img.style.borderRadius = "50%";
+          avatar.appendChild(img);
+        } else {
+          avatar.textContent = member.avatar || "👤";
+        }
+
+        const name = document.createElement("div");
+        name.className = "member-name";
+        name.textContent = member.name;
+
+        const info = document.createElement("div");
+        info.className = "member-info";
+        info.textContent = getMemberDisplayText(member);
+
+        card.appendChild(avatar);
+        card.appendChild(name);
+        card.appendChild(info);
+
+        return card;
+      }
+
+      // CSS for avatar images
       function initializeTreeControls() {
         document.getElementById("zoom-in").onclick = () => {
           zoomLevel *= 1.2;
@@ -1401,22 +1440,57 @@
           ? `Lived ${calculateAge(member.birthDate, member.deathDate)} years`
           : `Age ${calculateAge(member.birthDate)}`;
 
+        // Get father (via parentId) and mother (parentId + 1)
+        const father = familyData.family.find((m) => m.id === member.parentId);
+        const mother = member.parentId
+          ? familyData.family.find((m) => m.id === member.parentId + 1)
+          : null;
+
+        // Get children (anyone who has this member's id as their parentId)
+        const children = familyData.family.filter(
+          (m) => m.parentId === member.id
+        );
+
+        // Add only if father exists
+        let familyInfo = "";
+        if (father) {
+          familyInfo += `<p style="margin: 10px 0;"><strong>Father:</strong> ${father.name}</p>`;
+          if (mother) {
+            familyInfo += `<p style="margin: 10px 0;"><strong>Mother:</strong> ${mother.name}</p>`;
+          }
+        }
+
+        if (children.length > 0) {
+          const childrenNames = children.map((child) => child.name).join(", ");
+          familyInfo += `<p style="margin: 10px 0;"><strong>Children:</strong> ${childrenNames}</p>`;
+        }
+
         modalBody.innerHTML = `
-    <div class="modal-member">
-        <div class="modal-avatar">${member.avatar}</div>
-        <h2>${member.name}</h2>
-        <p><strong>Born:</strong> ${new Date(
+    <div style="display: flex; gap: 20px; align-items: flex-start;">
+      <div style="flex-shrink: 0;">
+        <img src="${member.avatar}"
+        }" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px;">
+      </div>
+      <div style="flex: 1;">
+        <h2 style="margin: 0 0 10px 0;">${member.name}</h2>
+        <p style="margin: 10px 0;"><strong>Born:</strong> ${new Date(
           member.birthDate
         ).toLocaleDateString()}</p>
         ${
           member.deathDate
-            ? `<p><strong>Died:</strong> ${new Date(
+            ? `<p style="margin: 10px 0;"><strong>Died:</strong> ${new Date(
                 member.deathDate
               ).toLocaleDateString()}</p>`
             : ""
         }
-        <p><strong>${member.deathDate ? "Lived" : "Age"}:</strong> ${age}</p>
-        <p><strong>Generation:</strong> ${member.generation}</p>
+        <p style="margin: 10px 0;"><strong>${
+          member.deathDate ? "Lived" : "Age"
+        }:</strong> ${age}</p>
+        <p style="margin: 10px 0;"><strong>Generation:</strong> ${
+          member.generation
+        }</p>
+        ${familyInfo}
+      </div>
     </div>
   `;
 
@@ -1430,17 +1504,42 @@
         const modalBody = document.getElementById("modal-body");
 
         let content = `<h2>Birthdays on ${date}</h2>`;
+        const today = new Date();
+
         members.forEach((member) => {
-          const age = member.deathDate
-            ? `Would be ${calculateAge(member.birthDate)} years old`
-            : `Turns ${calculateAge(member.birthDate) + 1}`;
+          let ageText = "";
+
+          if (member.deathDate) {
+            ageText = `Would be ${calculateAge(member.birthDate)} years old`;
+          } else {
+            const birthDate = new Date(member.birthDate);
+            const birthdayThisYear = new Date(
+              today.getFullYear(),
+              birthDate.getMonth(),
+              birthDate.getDate()
+            );
+
+            const currentAge = calculateAge(member.birthDate);
+
+            if (birthdayThisYear < today) {
+              // Birthday has already passed this year
+              ageText = `Will turn ${currentAge + 1} next year`;
+            } else {
+              // Birthday is upcoming or today
+              ageText = `Turns ${currentAge + 1}`;
+            }
+          }
 
           content += `
-        <div class="modal-member">
-            <div class="modal-avatar">${member.avatar}</div>
-            <h3>${member.name}</h3>
-            <p>${age}</p>
+      <div class="modal-member" style="display: flex; gap: 15px; align-items: center; margin-bottom: 15px;">
+        <div class="modal-avatar" style="flex-shrink: 0; margin-top: 20px;">
+          <img src="${member.avatar}" style="width: 100px; height: 100px; object-fit: cover;">
         </div>
+        <div>
+          <h3 style="margin: 0;">${member.name}</h3>
+          <p style="margin: 5px 0 0 0;">${ageText}</p>
+        </div>
+      </div>
     `;
         });
 
@@ -1485,6 +1584,10 @@
         color: #333;
         overflow-x: hidden;
         background-color: black;
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
       }
 
       /* Navigation */
@@ -2089,6 +2192,29 @@
       .calendar-day.current-day.has-birthday {
         background-color: #8e44ad; /* Purple for current day with birthday */
         border: 2px solid #732d91;
+      }
+
+      .member-avatar {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+        animation: float 3s ease-in-out infinite;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 0.5rem auto;
+        background: #f0f0f0;
+        overflow: hidden;
+        border: 2px solid #ddd;
+      }
+
+      .member-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
       }
     </style>
   </body>
