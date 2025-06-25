@@ -8,6 +8,15 @@
   </head>
   <body>
     <!-- Navigation -->
+    <div id="login-container">
+      <h2>Login</h2>
+      <input type="text" id="userId" placeholder="User ID" />
+      <input type="password" id="password" placeholder="Password" />
+      <button onclick="login()">Login</button>
+      <p id="error" style="color: red"></p>
+    </div>
+    <!-- Navigation -->
+    <div id="main-content">
     <nav class="navbar">
       <div class="nav-container">
         <h1 class="nav-logo">Poduri's</h1>
@@ -55,8 +64,65 @@
         <div id="modal-body"></div>
       </div>
     </div>
+    </div>
     <script src="data.js"></script>
     <script>
+      const storedUsername = "yuvi123";
+      const storedPasswordHash =
+        "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918";
+      const LOGIN_EXPIRY_HOURS = 24;
+
+      async function login() {
+        const username = document.getElementById("userId").value;
+        const password = document.getElementById("password").value;
+        const errorEl = document.getElementById("error");
+
+        const encoder = new TextEncoder();
+        const data = encoder.encode(password);
+        const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const hashHex = hashArray
+          .map((b) => b.toString(16).padStart(2, "0"))
+          .join("");
+
+        if (username === storedUsername && hashHex === storedPasswordHash) {
+          // Save login flag and time
+          localStorage.setItem("isLoggedIn", "true");
+          localStorage.setItem("loginTime", Date.now().toString());
+          showMainContent();
+        } else {
+          errorEl.textContent = "Invalid credentials. Try again!";
+        }
+      }
+
+      // Check login status and expiry
+      window.onload = function () {
+        const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+        const loginTime = parseInt(localStorage.getItem("loginTime"));
+
+        if (isLoggedIn && !isNaN(loginTime)) {
+          const now = Date.now();
+          const hoursSinceLogin = (now - loginTime) / (1000 * 60 * 60);
+
+          if (hoursSinceLogin < LOGIN_EXPIRY_HOURS) {
+            showMainContent();
+            return;
+          } else {
+            // Time expired — clear login info
+            localStorage.removeItem("isLoggedIn");
+            localStorage.removeItem("loginTime");
+          }
+        }
+
+        // Default: show login screen
+        document.getElementById("login-container").style.display = "flex";
+      };
+
+      function showMainContent() {
+        document.getElementById("login-container").style.display = "none";
+        document.getElementById("main-content").style.display = "block";
+        renderFamilyTree(); // Load your tree here
+      }
       // Global variables
       let zoomLevel = 1;
       let panX = 0,
@@ -1627,6 +1693,36 @@
         height: 100%;
         object-fit: cover;
         border-radius: 50%;
+      }
+      #login-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        background: #000;
+        color: #fff;
+      }
+
+      #login-container input {
+        padding: 10px;
+        margin: 10px;
+        border-radius: 5px;
+        border: none;
+        width: 200px;
+      }
+
+      #login-container button {
+        padding: 10px 20px;
+        background: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      #main-content {
+        display: none;
+        padding: 20px;
       }
     </style>
   </body>
