@@ -893,7 +893,7 @@
             const pathData = `M ${startX} ${startY} L ${startX} ${midY} L ${endX} ${midY} L ${endX} ${endY}`;
 
             path.setAttribute("d", pathData);
-            path.setAttribute("stroke", "black");
+            path.setAttribute("stroke", "#4a90e2");
             path.setAttribute("stroke-width", "2");
             path.setAttribute("fill", "none");
             path.setAttribute("stroke-linecap", "round");
@@ -959,10 +959,17 @@
         };
       }
 
-      // Enable panning
+      // Enable panning and mobile touch support
       function enablePanning() {
         const container = document.getElementById("tree-container");
+        let touches = [];
+        let lastDistance = 0;
+        let lastCenter = { x: 0, y: 0 };
+        let velocity = { x: 0, y: 0 };
+        let lastMoveTime = 0;
+        let lastPosition = { x: 0, y: 0 };
 
+        // Mouse events for desktop
         container.addEventListener("mousedown", (e) => {
           // Don't start panning if clicking on a member card
           if (e.target.closest(".member-card")) {
@@ -971,14 +978,30 @@
 
           isDragging = true;
           dragStart = { x: e.clientX - panX, y: e.clientY - panY };
+          lastPosition = { x: e.clientX, y: e.clientY };
+          lastMoveTime = Date.now();
+          velocity = { x: 0, y: 0 };
           container.style.cursor = "grabbing";
+          container.classList.add("dragging");
           e.preventDefault();
         });
 
         container.addEventListener("mousemove", (e) => {
           if (isDragging) {
+            const currentTime = Date.now();
+            const deltaTime = currentTime - lastMoveTime;
+
+            if (deltaTime > 0) {
+              velocity.x = (e.clientX - lastPosition.x) / deltaTime;
+              velocity.y = (e.clientY - lastPosition.y) / deltaTime;
+            }
+
             panX = e.clientX - dragStart.x;
             panY = e.clientY - dragStart.y;
+
+            lastPosition = { x: e.clientX, y: e.clientY };
+            lastMoveTime = currentTime;
+
             applyTransform();
           }
         });
@@ -986,11 +1009,18 @@
         container.addEventListener("mouseup", () => {
           isDragging = false;
           container.style.cursor = "grab";
+          container.classList.remove("dragging");
+
+          // Add momentum scrolling for smooth feel
+          if (Math.abs(velocity.x) > 0.1 || Math.abs(velocity.y) > 0.1) {
+            addMomentum();
+          }
         });
 
         container.addEventListener("mouseleave", () => {
           isDragging = false;
           container.style.cursor = "grab";
+          container.classList.remove("dragging");
         });
 
         container.addEventListener("wheel", (e) => {
@@ -1004,6 +1034,9 @@
           const oldZoom = zoomLevel;
           zoomLevel *= delta;
 
+          // Limit zoom levels
+          zoomLevel = Math.max(0.1, Math.min(5, zoomLevel));
+
           // Adjust pan to zoom towards mouse
           panX = mouseX - (mouseX - panX) * (zoomLevel / oldZoom);
           panY = mouseY - (mouseY - panY) * (zoomLevel / oldZoom);
@@ -1011,8 +1044,209 @@
           applyTransform();
         });
 
-        // Set initial cursor
+        // Touch events for mobile
+        container.addEventListener("touchstart", (e) => {
+          e.preventDefault();
+          touches = Array.from(e.touches);
+
+          if (touches.length === 1) {
+            // Single touch - start panning
+            if (!e.target.closest(".member-card")) {
+              isDragging = true;
+              dragStart = {
+                x: touches[0].clientX - panX,
+                y: touches[0].clientY - panY,
+              };
+              lastPosition = { x: touches[0].clientX, y: touches[0].clientY };
+              lastMoveTime = Date.now();
+              velocity = { x: 0, y: 0 };
+              container.classList.add("dragging");
+            }
+          } else if (touches.length === 2) {
+            // Two touches - prepare for pinch zoom
+            isDragging = false;
+            container.classList.remove("dragging");
+            const rect = container.getBoundingClientRect();
+
+            // Calculate distance between touches
+            const dx = touches[1].clientX - touches[0].clientX;
+            const dy = touches[1].clientY - touches[0].clientY;
+            lastDistance = Math.sqrt(dx * dx + dy * dy);
+
+            // Calculate center point between touches
+            lastCenter = {
+              x: (touches[0].clientX + touches[1].clientX) / 2 - rect.left,
+              y: (touches[0].clientY + touches[1].clientY) / 2 - rect.top,
+            };
+          }
+        });
+
+        container.addEventListener("touchmove", (e) => {
+          e.preventDefault();
+          touches = Array.from(e.touches);
+
+          if (touches.length === 1 && isDragging) {
+            // Single touch panning (works in all directions)
+            const currentTime = Date.now();
+            const deltaTime = currentTime - lastMoveTime;
+
+            if (deltaTime > 0) {
+              velocity.x = (touches[0].clientX - lastPosition.x) / deltaTime;
+              velocity.y = (touches[0].clientY - lastPosition.y) / deltaTime;
+            }
+
+            panX = touches[0].clientX - dragStart.x;
+            panY = touches[0].clientY - dragStart.y;
+
+            lastPosition = { x: touches[0].clientX, y: touches[0].clientY };
+            lastMoveTime = currentTime;
+
+            applyTransform();
+          } else if (touches.length === 2) {
+            // Two touch pinch zoom
+            const rect = container.getBoundingClientRect();
+
+            // Calculate new distance and center
+            const dx = touches[1].clientX - touches[0].clientX;
+            const dy = touches[1].clientY - touches[0].clientY;
+            const newDistance = Math.sqrt(dx * dx + dy * dy);
+
+            const newCenter = {
+              x: (touches[0].clientX + touches[1].clientX) / 2 - rect.left,
+              y: (touches[0].clientY + touches[1].clientY) / 2 - rect.top,
+            };
+
+            if (lastDistance > 0) {
+              // Calculate zoom factor
+              const zoomFactor = newDistance / lastDistance;
+              const oldZoom = zoomLevel;
+              zoomLevel *= zoomFactor;
+
+              // Limit zoom levels
+              zoomLevel = Math.max(0.1, Math.min(5, zoomLevel));
+
+              // Adjust pan to zoom towards center of pinch
+              panX = newCenter.x - (newCenter.x - panX) * (zoomLevel / oldZoom);
+              panY = newCenter.y - (newCenter.y - panY) * (zoomLevel / oldZoom);
+
+              // Handle center movement (combined pan + zoom)
+              const centerDx = newCenter.x - lastCenter.x;
+              const centerDy = newCenter.y - lastCenter.y;
+              panX += centerDx;
+              panY += centerDy;
+
+              applyTransform();
+            }
+
+            lastDistance = newDistance;
+            lastCenter = newCenter;
+          }
+        });
+
+        container.addEventListener("touchend", (e) => {
+          e.preventDefault();
+          touches = Array.from(e.touches);
+
+          if (touches.length === 0) {
+            isDragging = false;
+            container.classList.remove("dragging");
+            lastDistance = 0;
+
+            // Add momentum scrolling for mobile
+            if (Math.abs(velocity.x) > 0.1 || Math.abs(velocity.y) > 0.1) {
+              addMomentum();
+            }
+          } else if (touches.length === 1) {
+            // Switched from two touches to one - restart single touch
+            isDragging = true;
+            dragStart = {
+              x: touches[0].clientX - panX,
+              y: touches[0].clientY - panY,
+            };
+            lastPosition = { x: touches[0].clientX, y: touches[0].clientY };
+            lastMoveTime = Date.now();
+            velocity = { x: 0, y: 0 };
+            container.classList.add("dragging");
+            lastDistance = 0;
+          }
+        });
+
+        // Prevent default touch behaviors that might interfere
+        container.addEventListener("touchcancel", (e) => {
+          e.preventDefault();
+          isDragging = false;
+          container.classList.remove("dragging");
+          lastDistance = 0;
+          touches = [];
+        });
+
+        // Add momentum scrolling function
+        function addMomentum() {
+          const friction = 0.95;
+          const minVelocity = 0.01;
+
+          function animate() {
+            velocity.x *= friction;
+            velocity.y *= friction;
+
+            if (
+              Math.abs(velocity.x) > minVelocity ||
+              Math.abs(velocity.y) > minVelocity
+            ) {
+              panX += velocity.x * 16; // 16ms frame time
+              panY += velocity.y * 16;
+              applyTransform();
+              requestAnimationFrame(animate);
+            }
+          }
+
+          requestAnimationFrame(animate);
+        }
+
+        // Keyboard navigation for accessibility
+        container.addEventListener("keydown", (e) => {
+          if (container.matches(":focus")) {
+            const step = 50;
+            switch (e.key) {
+              case "ArrowLeft":
+                panX += step;
+                applyTransform();
+                e.preventDefault();
+                break;
+              case "ArrowRight":
+                panX -= step;
+                applyTransform();
+                e.preventDefault();
+                break;
+              case "ArrowUp":
+                panY += step;
+                applyTransform();
+                e.preventDefault();
+                break;
+              case "ArrowDown":
+                panY -= step;
+                applyTransform();
+                e.preventDefault();
+                break;
+              case "+":
+              case "=":
+                zoomLevel *= 1.2;
+                applyTransform();
+                e.preventDefault();
+                break;
+              case "-":
+                zoomLevel /= 1.2;
+                applyTransform();
+                e.preventDefault();
+                break;
+            }
+          }
+        });
+
+        // Set initial cursor and properties
         container.style.cursor = "grab";
+        container.style.touchAction = "none";
+        container.tabIndex = 0; // Make focusable for keyboard navigation
       }
 
       // Apply transform
@@ -1256,7 +1490,6 @@
       /* Navigation */
       .navbar {
         background: linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 100%);
-        padding: 1rem 0;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         position: fixed;
         top: 0;
@@ -1511,8 +1744,16 @@
         transition: all 0.3s ease;
         box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
         transform-origin: center;
+        touch-action: manipulation;
+        -webkit-user-select: none;
+        user-select: none;
       }
 
+      #tree-container {
+        touch-action: none;
+        -webkit-user-select: none;
+        user-select: none;
+      }
       .member-card:hover {
         transform: scale(1.1) translateY(-10px);
         box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
