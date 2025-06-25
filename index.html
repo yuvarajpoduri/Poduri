@@ -4,15 +4,16 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Poduri's</title>
-    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" type="image/png" href="/images/logo.png" />
   </head>
-  <body>
+  <body oncontextmenu="return false;">
     <!-- Navigation -->
     <nav class="navbar">
       <div class="nav-container">
         <h1 class="nav-logo">Poduri's</h1>
         <div class="nav-menu">
           <button class="nav-btn active" data-tab="home">Home</button>
+          <button class="nav-btn"><a href="families.html">Families</a></button>
           <button class="nav-btn" data-tab="birthdays">Birthdays</button>
         </div>
       </div>
@@ -55,641 +56,8 @@
         <div id="modal-body"></div>
       </div>
     </div>
-
+    <script src="data.js"></script>
     <script>
-      // Family data
-      const familyData = {
-        family: [
-          {
-            id: 1,
-            name: "Poduri Appanna",
-            birthDate: "",
-            deathDate: "",
-            gender: "male",
-            parentId: null,
-            spouseId: 2,
-            generation: 1,
-            avatar: "PA",
-          },
-          {
-            id: 2,
-            name: "Poduri Parvati",
-            birthDate: "",
-            deathDate: null,
-            gender: "female",
-            parentId: null,
-            spouseId: 1,
-            generation: 1,
-            avatar: "PP",
-          },
-          {
-            id: 3,
-            name: "Poduri Shesharao",
-            birthDate: "",
-            deathDate: null,
-            gender: "male",
-            parentId: 1,
-            spouseId: 4,
-            generation: 2,
-            avatar: "PS",
-          },
-          {
-            id: 4,
-            name: "Poduri Nagamani",
-            birthDate: "",
-            deathDate: null,
-            gender: "female",
-            parentId: null,
-            spouseId: 3,
-            generation: 2,
-            avatar: "PN",
-          },
-          {
-            id: 5,
-            name: "Poduri Satyanarayana",
-            birthDate: "",
-            deathDate: null,
-            gender: "male",
-            parentId: 1,
-            spouseId: 6,
-            generation: 2,
-            avatar: "PS",
-          },
-          {
-            id: 6,
-            name: "Poduri kameswari",
-            birthDate: "",
-            deathDate: null,
-            gender: "female",
-            parentId: null,
-            spouseId: 5,
-            generation: 2,
-            avatar: "PK",
-          },
-          {
-            id: 7,
-            name: "Poduri Bhaskara Rao",
-            birthDate: "",
-            deathDate: null,
-            gender: "male",
-            parentId: 1,
-            spouseId: 8,
-            generation: 2,
-            avatar: "PB",
-          },
-          {
-            id: 8,
-            name: "Poduri Jaya Kumari",
-            birthDate: "",
-            deathDate: null,
-            gender: "female",
-            parentId: null,
-            spouseId: 7,
-            generation: 2,
-            avatar: "PJK",
-          },
-          {
-            id: 9,
-            name: "Poduri Venkateswara Rao",
-            birthDate: "",
-            deathDate: null,
-            gender: "male",
-            parentId: 1,
-            spouseId: 10,
-            generation: 2,
-            avatar: "PVR",
-          },
-          {
-            id: 10,
-            name: "Poduri Anantha Lakshmi",
-            birthDate: "",
-            deathDate: null,
-            gender: "female",
-            parentId: null,
-            spouseId: 9,
-            generation: 2,
-            avatar: "PAL",
-          },
-          {
-            id: 11,
-            name: "Poduri Rama Krishna",
-            birthDate: "1964-11-12",
-            deathDate: null,
-            gender: "male",
-            parentId: 3,
-            spouseId: 12,
-            generation: 3,
-            avatar: "PK",
-          },
-          {
-            id: 12,
-            name: "Poduri Anjali Devi",
-            birthDate: "1969-08-11",
-            deathDate: null,
-            gender: "female",
-            parentId: null,
-            spouseId: 11,
-            generation: 3,
-            avatar: "PAD",
-          },
-          {
-            id: 13,
-            name: "Poduri Lakshmi Narayana",
-            birthDate: "1973-09-19",
-            deathDate: null,
-            gender: "male",
-            parentId: 3,
-            spouseId: 14,
-            generation: 3,
-            avatar: "PLN",
-          },
-          {
-            id: 14,
-            name: "Poduri Venkata Lakshmi",
-            birthDate: "1982-05-25",
-            deathDate: null,
-            gender: "female",
-            parentId: null,
-            spouseId: 13,
-            generation: 3,
-            avatar: "PVL",
-          },
-          {
-            id: 15,
-            name: "Poduri Veera Venkata Mallikarjuna Rao",
-            birthDate: "",
-            deathDate: null,
-            gender: "male",
-            parentId: 3,
-            spouseId: 16,
-            generation: 3,
-            avatar: "PM",
-          },
-          {
-            id: 16,
-            name: "Poduri Vijaya Lakshmi",
-            birthDate: "",
-            deathDate: null,
-            gender: "female",
-            parentId: null,
-            spouseId: 15,
-            generation: 3,
-            avatar: "PVL",
-          },
-          {
-            id: 17,
-            name: "Poduri Prasad",
-            birthDate: "",
-            deathDate: null,
-            gender: "male",
-            parentId: 5,
-            spouseId: 18,
-            generation: 3,
-            avatar: "PS",
-          },
-          {
-            id: 18,
-            name: "Poduri Vara Lakshmi",
-            birthDate: "",
-            deathDate: null,
-            gender: "female",
-            parentId: null,
-            spouseId: 17,
-            generation: 3,
-            avatar: "PM",
-          },
-          {
-            id: 19,
-            name: "Poduri Appaji",
-            birthDate: "",
-            deathDate: null,
-            gender: "male",
-            parentId: 5,
-            spouseId: 20,
-            generation: 3,
-            avatar: "PA",
-          },
-          {
-            id: 20,
-            name: "Poduri Naga Maha Lakshmi",
-            birthDate: "",
-            deathDate: null,
-            gender: "male",
-            parentId: null,
-            spouseId: 19,
-            generation: 3,
-            avatar: "PNML",
-          },
-          {
-            id: 21,
-            name: "Poduri Venkata Surya Prakash Rao",
-            birthDate: "1977-12-07",
-            deathDate: null,
-            gender: "male",
-            parentId: 5,
-            spouseId: 22,
-            generation: 3,
-            avatar: "PVSPR",
-          },
-          {
-            id: 22,
-            name: "Poduri Satya Devi",
-            birthDate: "1984-06-24",
-            deathDate: null,
-            gender: "female",
-            parentId: null,
-            spouseId: 21,
-            generation: 3,
-            avatar: "PSD",
-          },
-          {
-            id: 23,
-            name: "Poduri Siva Prasad",
-            birthDate: "",
-            deathDate: null,
-            gender: "male",
-            parentId: 7,
-            spouseId: 24,
-            generation: 3,
-            avatar: "PSP",
-          },
-          {
-            id: 24,
-            name: "Poduri Jaya Lakshmi",
-            birthDate: "",
-            deathDate: null,
-            gender: "female",
-            parentId: null,
-            spouseId: 23,
-            generation: 3,
-            avatar: "PJL",
-          },
-          {
-            id: 25,
-            name: "Poduri Mohan",
-            birthDate: "",
-            deathDate: null,
-            gender: "male",
-            parentId: 7,
-            spouseId: 26,
-            generation: 3,
-            avatar: "PM",
-          },
-          {
-            id: 26,
-            name: "Poduri Lakshmi",
-            birthDate: "",
-            deathDate: null,
-            gender: "female",
-            parentId: null,
-            spouseId: 25,
-            generation: 3,
-            avatar: "PL",
-          },
-          {
-            id: 27,
-            name: "Poduri Appaji",
-            birthDate: "",
-            deathDate: null,
-            gender: "male",
-            parentId: 9,
-            spouseId: 28,
-            generation: 3,
-            avatar: "PA",
-          },
-          {
-            id: 28,
-            name: "Poduri Venkata Lakshmi",
-            birthDate: "",
-            deathDate: null,
-            gender: "female",
-            parentId: null,
-            spouseId: 27,
-            generation: 3,
-            avatar: "PVL",
-          },
-          {
-            id: 29,
-            name: "Poduri Kali",
-            birthDate: "",
-            deathDate: null,
-            gender: "male",
-            parentId: 9,
-            spouseId: 30,
-            generation: 3,
-            avatar: "PK",
-          },
-          {
-            id: 30,
-            name: "Poduri Lavanya",
-            birthDate: "",
-            deathDate: null,
-            gender: "female",
-            parentId: null,
-            spouseId: 29,
-            generation: 3,
-            avatar: "PM",
-          },
-          {
-            id: 31,
-            name: "Poduri Maruti",
-            birthDate: "1981-10-09",
-            deathDate: null,
-            gender: "male",
-            parentId: 9,
-            spouseId: 32,
-            generation: 3,
-            avatar: "PM",
-          },
-          {
-            id: 32,
-            name: "Poduri Bharathi Devi",
-            birthDate: "1987-06-23",
-            deathDate: null,
-            gender: "female",
-            parentId: null,
-            spouseId: 31,
-            generation: 3,
-            avatar: "PBV",
-          },
-          {
-            id: 33,
-            name: "Poduri Lakshmi",
-            birthDate: "1991-03-06",
-            deathDate: null,
-            gender: "male",
-            parentId: 11,
-            spouseId: null,
-            generation: 4,
-            avatar: "PL",
-          },
-          {
-            id: 34,
-            name: "Poduri Kumari",
-            birthDate: "1989-01-20",
-            deathDate: null,
-            gender: "female",
-            parentId: 11,
-            spouseId: null,
-            generation: 4,
-            avatar: "PK",
-          },
-          {
-            id: 35,
-            name: "Poduri Seshu Kumar",
-            birthDate: "1993-02-01",
-            deathDate: null,
-            gender: "male",
-            parentId: 11,
-            spouseId: 36,
-            generation: 4,
-            avatar: "PM",
-          },
-          {
-            id: 36,
-            name: "Poduri Pavani",
-            birthDate: "1997-01-01",
-            deathDate: null,
-            gender: "female",
-            parentId: null,
-            spouseId: 35,
-            generation: 4,
-            avatar: "PM",
-          },
-          {
-            id: 37,
-            name: "Poduri Mounika",
-            birthDate: "1999-06-28",
-            deathDate: null,
-            gender: "female",
-            parentId: 13,
-            spouseId: null,
-            generation: 4,
-            avatar: "PM",
-          },
-          {
-            id: 38,
-            name: "Poduri Sai Lakshmi",
-            birthDate: "2002-02-06",
-            deathDate: null,
-            gender: "female",
-            parentId: 13,
-            spouseId: null,
-            generation: 4,
-            avatar: "PC",
-          },
-          {
-            id: 39,
-            name: "Poduri Sravani",
-            birthDate: "",
-            deathDate: null,
-            gender: "female",
-            parentId: 15,
-            spouseId: null,
-            generation: 4,
-            avatar: "PS",
-          },
-          {
-            id: 40,
-            name: "Poduri Durga Devi",
-            birthDate: "",
-            deathDate: null,
-            gender: "female",
-            parentId: 15,
-            spouseId: null,
-            generation: 4,
-            avatar: "PDD",
-          },
-          {
-            id: 41,
-            name: "Poduri Kala",
-            birthDate: "",
-            deathDate: null,
-            gender: "female",
-            parentId: 17,
-            spouseId: null,
-            generation: 4,
-            avatar: "PK",
-          },
-          {
-            id: 42,
-            name: "Poduri Raja Mouli",
-            birthDate: "2004-06-13",
-            deathDate: null,
-            gender: "male",
-            parentId: 17,
-            spouseId: null,
-            generation: 4,
-            avatar: "PRM",
-          },
-          {
-            id: 43,
-            name: "Poduri Manikanta",
-            birthDate: "",
-            deathDate: null,
-            gender: "male",
-            parentId: 19,
-            spouseId: null,
-            generation: 4,
-            avatar: "PM",
-          },
-          {
-            id: 44,
-            name: "Poduri Satya Prakash",
-            birthDate: "2004-09-24",
-            deathDate: null,
-            gender: "male",
-            parentId: 19,
-            spouseId: null,
-            generation: 4,
-            avatar: "PSP",
-          },
-          {
-            id: 45,
-            name: "Poduri Yuvaraj Durga Pavan",
-            birthDate: "2004-11-15",
-            deathDate: null,
-            gender: "male",
-            parentId: 21,
-            spouseId: null,
-            generation: 4,
-            avatar: "PYDP",
-          },
-          {
-            id: 46,
-            name: "Poduri Hari Satyanarayana Murthy",
-            birthDate: "2007-01-31",
-            deathDate: null,
-            gender: "male",
-            parentId: 21,
-            spouseId: null,
-            generation: 4,
-            avatar: "PHSM",
-          },
-          {
-            id: 47,
-            name: "Poduri Tharuni",
-            birthDate: "",
-            deathDate: null,
-            gender: "female",
-            parentId: 23,
-            spouseId: null,
-            generation: 4,
-            avatar: "PT",
-          },
-          {
-            id: 48,
-            name: "Poduri Kesava",
-            birthDate: "",
-            deathDate: null,
-            gender: "female",
-            parentId: 23,
-            spouseId: null,
-            generation: 4,
-            avatar: "PK",
-          },
-          {
-            id: 49,
-            name: "Poduri Sahiti",
-            birthDate: "",
-            deathDate: null,
-            gender: "female",
-            parentId: 25,
-            spouseId: null,
-            generation: 4,
-            avatar: "PS",
-          },
-          {
-            id: 50,
-            name: "Poduri Yaswanth",
-            birthDate: "",
-            deathDate: null,
-            gender: "male",
-            parentId: 25,
-            spouseId: null,
-            generation: 4,
-            avatar: "PY",
-          },
-          {
-            id: 51,
-            name: "Poduri Vinay",
-            birthDate: "",
-            deathDate: null,
-            gender: "male",
-            parentId: 27,
-            spouseId: null,
-            generation: 4,
-            avatar: "PV",
-          },
-          {
-            id: 52,
-            name: "Poduri Kasi Viswanath",
-            birthDate: "",
-            deathDate: null,
-            gender: "male",
-            parentId: 27,
-            spouseId: null,
-            generation: 4,
-            avatar: "PKV",
-          },
-          {
-            id: 53,
-            name: "Poduri Meghana",
-            birthDate: "2015-03-05",
-            deathDate: null,
-            gender: "female",
-            parentId: 29,
-            spouseId: null,
-            generation: 4,
-            avatar: "",
-          },
-          {
-            id: 54,
-            name: "Poduri Abhi",
-            birthDate: "2013-07-07",
-            deathDate: null,
-            gender: "male",
-            parentId: 29,
-            spouseId: null,
-            generation: 4,
-            avatar: "PA",
-          },
-          {
-            id: 55,
-            name: "Poduri Jahnavi",
-            birthDate: "2013-12-6",
-            deathDate: null,
-            gender: "female",
-            parentId: 31,
-            spouseId: null,
-            generation: 4,
-            avatar: "PJ",
-          },
-          {
-            id: 56,
-            name: "Poduri Pujya",
-            birthDate: "2019-03-22",
-            deathDate: null,
-            gender: "female",
-            parentId: 35,
-            spouseId: null,
-            generation: 5,
-            avatar: "PP",
-          },
-          {
-            id: 57,
-            name: "Poduri Chanya",
-            birthDate: "2023-08-12",
-            deathDate: null,
-            gender: "female",
-            parentId: 35,
-            spouseId: null,
-            generation: 5,
-            avatar: "",
-          },
-        ],
-      };
-
       // Global variables
       let zoomLevel = 1;
       let panX = 0,
@@ -698,8 +66,6 @@
       let dragStart = { x: 0, y: 0 };
       let treeWidth = 0;
       let treeHeight = 0;
-      let touchStartTime = 0;
-      let touchMoved = false;
 
       // Initialize app
       document.addEventListener("DOMContentLoaded", function () {
@@ -771,7 +137,7 @@
         });
 
         // Calculate dynamic dimensions based on family size
-        const generationHeight = 220;
+        const generationHeight = 400;
         const memberWidth = 180;
         const memberSpacing = 240;
 
@@ -892,7 +258,7 @@
             const pathData = `M ${startX} ${startY} C ${controlPoint1X} ${controlPoint1Y}, ${controlPoint2X} ${controlPoint2Y}, ${endX} ${endY}`;
 
             path.setAttribute("d", pathData);
-            path.setAttribute("stroke", "#4a90e2");
+            path.setAttribute("stroke", "black");
             path.setAttribute("stroke-width", "2");
             path.setAttribute("fill", "none");
             path.setAttribute("stroke-linecap", "round");
@@ -942,55 +308,12 @@
       function createMemberCard(member) {
         const card = document.createElement("div");
         card.className = "member-card";
+        card.onclick = () => showMemberDetails(member);
 
-        // Enhanced click handler for better mobile support
-        let cardTouchStartTime = 0;
-        let cardTouchMoved = false;
-        let cardTouchStartPos = { x: 0, y: 0 };
-
-        // Mouse click for desktop
-        card.addEventListener("click", (e) => {
-          e.stopPropagation();
-          showMemberDetails(member);
-        });
-
-        // Touch events for mobile - more reliable than onclick
-        card.addEventListener("touchstart", (e) => {
-          cardTouchStartTime = Date.now();
-          cardTouchMoved = false;
-          const touch = e.touches[0];
-          cardTouchStartPos = { x: touch.clientX, y: touch.clientY };
-          e.stopPropagation(); // Prevent container touch events
-        });
-
-        card.addEventListener("touchmove", (e) => {
-          const touch = e.touches[0];
-          const moveDistance = Math.sqrt(
-            Math.pow(touch.clientX - cardTouchStartPos.x, 2) +
-              Math.pow(touch.clientY - cardTouchStartPos.y, 2)
-          );
-
-          if (moveDistance > 10) {
-            // 10px threshold
-            cardTouchMoved = true;
-          }
-        });
-
-        card.addEventListener("touchend", (e) => {
-          const touchDuration = Date.now() - cardTouchStartTime;
-
-          // Only trigger if it was a quick tap without much movement
-          if (!cardTouchMoved && touchDuration < 500) {
-            e.preventDefault();
-            e.stopPropagation();
-            showMemberDetails(member);
-          }
-        });
-
-        // Keep your existing avatar, name, info code exactly as is
         const avatar = document.createElement("div");
         avatar.className = "member-avatar";
 
+        // Check if avatar is a URL (contains http/https) or text
         if (
           member.avatar &&
           (member.avatar.startsWith("http://") ||
@@ -1004,8 +327,6 @@
           img.style.objectFit = "cover";
           img.style.borderRadius = "50%";
           avatar.appendChild(img);
-        } else {
-          avatar.textContent = member.avatar || "👤";
         }
 
         const name = document.createElement("div");
@@ -1022,6 +343,7 @@
 
         return card;
       }
+
       // CSS for avatar images
       function initializeTreeControls() {
         document.getElementById("zoom-in").onclick = () => {
@@ -1128,43 +450,42 @@
         });
 
         // Touch events for mobile
-        // Replace your existing touchstart event with this:
         container.addEventListener("touchstart", (e) => {
-          // Don't prevent default if touching a member card
-          if (e.target.closest(".member-card")) {
-            return; // Let the card handle its own touch events
-          }
-
           e.preventDefault();
           touches = Array.from(e.touches);
-          touchStartTime = Date.now();
-          touchMoved = false;
 
           if (touches.length === 1) {
-            isDragging = true;
-            dragStart = {
-              x: touches[0].clientX - panX,
-              y: touches[0].clientY - panY,
-            };
-            lastPosition = { x: touches[0].clientX, y: touches[0].clientY };
-            lastMoveTime = Date.now();
-            velocity = { x: 0, y: 0 };
-            container.classList.add("dragging");
+            // Single touch - start panning
+            if (!e.target.closest(".member-card")) {
+              isDragging = true;
+              dragStart = {
+                x: touches[0].clientX - panX,
+                y: touches[0].clientY - panY,
+              };
+              lastPosition = { x: touches[0].clientX, y: touches[0].clientY };
+              lastMoveTime = Date.now();
+              velocity = { x: 0, y: 0 };
+              container.classList.add("dragging");
+            }
           } else if (touches.length === 2) {
+            // Two touches - prepare for pinch zoom
             isDragging = false;
             container.classList.remove("dragging");
             const rect = container.getBoundingClientRect();
 
+            // Calculate distance between touches
             const dx = touches[1].clientX - touches[0].clientX;
             const dy = touches[1].clientY - touches[0].clientY;
             lastDistance = Math.sqrt(dx * dx + dy * dy);
 
+            // Calculate center point between touches
             lastCenter = {
               x: (touches[0].clientX + touches[1].clientX) / 2 - rect.left,
               y: (touches[0].clientY + touches[1].clientY) / 2 - rect.top,
             };
           }
         });
+
         container.addEventListener("touchmove", (e) => {
           e.preventDefault();
           touches = Array.from(e.touches);
@@ -1483,7 +804,7 @@
 
         const age = member.deathDate
           ? `Lived ${calculateAge(member.birthDate, member.deathDate)} years`
-          : `Age ${calculateAge(member.birthDate)}`;
+          : `${calculateAge(member.birthDate)}`;
 
         // Get father (via parentId) and mother (parentId + 1)
         const father = familyData.family.find((m) => m.id === member.parentId);
@@ -1634,7 +955,10 @@
         -moz-user-select: none;
         -ms-user-select: none;
       }
-
+      a {
+        color: white;
+        text-decoration: none;
+      }
       /* Navigation */
       .navbar {
         background: linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 100%);
