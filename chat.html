@@ -109,14 +109,15 @@
     const messagesBox = document.getElementById("chatMessages");
     const messageInput = document.getElementById("messageInput");
 
-    // Detect device name
-    const deviceName = navigator.userAgent.includes("Android")
-      ? "Android User"
-      : navigator.userAgent.includes("iPhone")
-      ? "iPhone User"
-      : "Web User";
+    // Ask for name if not set
+    let userName = localStorage.getItem("chatUserName");
+    if (!userName) {
+      userName = prompt("Please enter your name:");
+      if (!userName) userName = "Anonymous";
+      localStorage.setItem("chatUserName", userName);
+    }
 
-    // Load old messages from localStorage
+    // Load saved messages
     function loadMessages() {
       const saved = localStorage.getItem("familyChatMessages");
       if (saved) {
@@ -125,19 +126,18 @@
       }
     }
 
-    // Save messages to localStorage
+    // Save chat messages
     function saveMessages() {
       localStorage.setItem("familyChatMessages", messagesBox.innerHTML);
     }
 
-    // Send message
     function sendMessage() {
       const msg = messageInput.value.trim();
       if (!msg) return;
 
       const div = document.createElement("div");
       div.classList.add("message");
-      div.innerHTML = `<strong>${deviceName}:</strong> ${msg}`;
+      div.innerHTML = `<strong>${userName}:</strong> ${msg}`;
       messagesBox.appendChild(div);
       messagesBox.scrollTop = messagesBox.scrollHeight;
 
@@ -145,12 +145,12 @@
       saveMessages();
     }
 
-    // Enter key shortcut
+    // Enter key support
     messageInput.addEventListener("keydown", (e) => {
       if (e.key === "Enter") sendMessage();
     });
 
-    // Init
+    // Load messages on load
     loadMessages();
   </script>
 </body>
