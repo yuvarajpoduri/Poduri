@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Poduri's</title>
-    <link rel="icon" type="image/png" href="/images/logo.png" />
+    <link rel="stylesheet" href="style.css" />
   </head>
   <body oncontextmenu="return false;">
     <!-- Navigation -->
@@ -13,7 +13,6 @@
         <h1 class="nav-logo">Poduri's</h1>
         <div class="nav-menu">
           <button class="nav-btn active" data-tab="home">Home</button>
-          <button class="nav-btn"><a href="families.html">Families</a></button>
           <button class="nav-btn" data-tab="birthdays">Birthdays</button>
         </div>
       </div>
@@ -327,6 +326,8 @@
           img.style.objectFit = "cover";
           img.style.borderRadius = "50%";
           avatar.appendChild(img);
+        } else {
+          avatar.textContent = member.avatar || "👤";
         }
 
         const name = document.createElement("div");
@@ -955,10 +956,7 @@
         -moz-user-select: none;
         -ms-user-select: none;
       }
-      a {
-        color: white;
-        text-decoration: none;
-      }
+
       /* Navigation */
       .navbar {
         background: linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 100%);
