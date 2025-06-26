@@ -443,7 +443,7 @@ const familyData = {
     {
       id: 41,
       name: "Poduri Kala",
-      birthDate: "",
+      birthDate: "2002-07-20",
       deathDate: null,
       gender: "female",
       parentId: 17,
