@@ -7,36 +7,95 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <!-- Navigation -->
-    <div id="login-container">
-      <h2>Login</h2>
-      <input type="text" id="userId" placeholder="User ID" />
-      <input type="password" id="password" placeholder="Password" />
-      <button onclick="login()">Login</button>
-      <p id="error" style="color: red"></p>
+    <!-- Login Page -->
+    <div id="loginPage" class="login-container">
+      <form class="login-form" id="loginForm">
+        <h1 class="login-title">Login</h1>
+
+        <div class="form-group">
+          <label class="form-label">Select Family Member:</label>
+          <input
+            type="text"
+            id="usernameSearch"
+            class="username-search"
+            placeholder="Search for family member..."
+            autocomplete="off"
+          />
+          <div id="usernameDropdown" class="username-dropdown"></div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Password:</label>
+          <input
+            type="password"
+            id="passwordInput"
+            class="password-input"
+            placeholder="Enter password"
+            required
+          />
+        </div>
+
+        <button type="submit" class="login-btn">Login</button>
+        <div id="errorMessage" class="error-message"></div>
+      </form>
     </div>
+
     <!-- Navigation -->
-    <div id="main-content">
-    <nav class="navbar">
-      <div class="nav-container">
-        <h1 class="nav-logo">Poduri's</h1>
-        <div class="nav-menu">
-          <button class="nav-btn active" data-tab="home">Home</button>
-          <button class="nav-btn active"><a href="families.html">Families</a></button>
-          <button class="nav-btn active"><a href="chat.html">Chat Now</a></button>
-          <button class="nav-btn" data-tab="birthdays">Birthdays</button>
+    <div id="mainContent" class="main-content">
+      <nav class="navbar">
+        <div class="nav-container">
+          <h1 class="nav-logo">Poduri's</h1>
+        </div>
+      </nav>
+
+      <!-- Button Grid -->
+      <!-- Button Grid -->
+      <div class="button-grid">
+        <div class="grid-btn-container">
+          <a href="families.html" class="btn-link">
+            <img src="/images/families.png" alt="Families" class="btn-icon" />
+          </a>
+        </div>
+
+        <div class="grid-btn-container">
+          <a href="chat.html" class="btn-link">
+            <img src="/images/chat.png" alt="Chat" class="btn-icon" />
+          </a>
+        </div>
+
+        <div class="grid-btn-container">
+          <a href="birthdays.html" class="btn-link">
+            <img src="/images/calender.png" alt="Birthday" class="btn-icon" />
+          </a>
+        </div>
+
+        <div class="grid-btn-container" id="announcements-btn">
+          <a href="announcements.html" class="btn-link">
+            <img
+              src="/images/announce.png"
+              alt="Announcements"
+              class="btn-icon"
+            />
+          </a>
+          <span
+            id="notification-dot"
+            class="notification-dot"
+            style="display: none"
+          ></span>
         </div>
       </div>
-    </nav>
-
-    <!-- Home Page -->
-    <div id="home" class="tab-content active">
-      <!-- Today's Birthdays -->
-      <div id="today-birthdays" class="today-section">
-        <h2>Today's Birthdays 🎉</h2>
-        <div id="birthday-cards" class="birthday-cards"></div>
-      </div>
-
+      <center>
+        <h1
+          style="
+            font-weight: bolder;
+            color: black;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial,
+              sans-serif;
+          "
+        >
+          Family Tree
+        </h1>
+      </center>
       <!-- Family Tree Controls -->
       <div class="tree-controls">
         <button id="zoom-in" class="control-btn">Zoom In</button>
@@ -49,82 +108,184 @@
         <svg id="tree-svg" class="tree-svg"></svg>
         <div id="tree-members" class="tree-members"></div>
       </div>
-    </div>
 
-    <!-- Birthdays Page -->
-    <div id="birthdays" class="tab-content">
-      <div class="calendar-container">
-        <h2>Birthday Calendar</h2>
-        <div id="calendar-grid" class="calendar-grid"></div>
+      <!-- Member Detail Modal -->
+      <div id="member-modal" class="modal">
+        <div class="modal-content">
+          <span class="close" id="modal-close">&times;</span>
+          <div id="modal-body"></div>
+        </div>
+      </div>
+
+      <!-- Announcement Modal -->
+      <div id="announcement-modal" class="modal">
+        <div class="modal-content">
+          <span class="close" id="announcement-close">&times;</span>
+          <div id="announcement-modal-body"></div>
+        </div>
       </div>
     </div>
 
-    <!-- Member Detail Modal -->
-    <div id="member-modal" class="modal">
-      <div class="modal-content">
-        <span class="close">&times;</span>
-        <div id="modal-body"></div>
-      </div>
-    </div>
-    </div>
     <script src="data.js"></script>
+    <script src="events.js"></script>
     <script>
-      const storedUsername = "yuvi123";
-      const storedPasswordHash =
-        "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918";
-      const LOGIN_EXPIRY_HOURS = 24;
+      let currentUser = null;
+      let selectedUsername = "";
 
-      async function login() {
-        const username = document.getElementById("userId").value;
-        const password = document.getElementById("password").value;
-        const errorEl = document.getElementById("error");
+      // Initialize the application
+      document.addEventListener("DOMContentLoaded", function () {
+        checkAuth();
+        setupLogin();
+        populateUsernames();
+      });
 
-        const encoder = new TextEncoder();
-        const data = encoder.encode(password);
-        const hashBuffer = await crypto.subtle.digest("SHA-256", data);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        const hashHex = hashArray
-          .map((b) => b.toString(16).padStart(2, "0"))
-          .join("");
-
-        if (username === storedUsername && hashHex === storedPasswordHash) {
-          // Save login flag and time
-          localStorage.setItem("isLoggedIn", "true");
-          localStorage.setItem("loginTime", Date.now().toString());
+      function checkAuth() {
+        const user = sessionStorage.getItem("currentUser");
+        if (user) {
+          currentUser = JSON.parse(user);
           showMainContent();
         } else {
-          errorEl.textContent = "Invalid credentials. Try again!";
+          showLoginPage();
         }
       }
 
-      // Check login status and expiry
-      window.onload = function () {
-        const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-        const loginTime = parseInt(localStorage.getItem("loginTime"));
-
-        if (isLoggedIn && !isNaN(loginTime)) {
-          const now = Date.now();
-          const hoursSinceLogin = (now - loginTime) / (1000 * 60 * 60);
-
-          if (hoursSinceLogin < LOGIN_EXPIRY_HOURS) {
-            showMainContent();
-            return;
-          } else {
-            // Time expired — clear login info
-            localStorage.removeItem("isLoggedIn");
-            localStorage.removeItem("loginTime");
-          }
-        }
-
-        // Default: show login screen
-        document.getElementById("login-container").style.display = "flex";
-      };
+      function showLoginPage() {
+        document.getElementById("loginPage").style.display = "flex";
+        document.getElementById("mainContent").style.display = "none";
+      }
 
       function showMainContent() {
-        document.getElementById("login-container").style.display = "none";
-        document.getElementById("main-content").style.display = "block";
-        renderFamilyTree(); // Load your tree here
+        document.getElementById("loginPage").style.display = "none";
+        document.getElementById("mainContent").style.display = "block";
+        renderFamilyTree();
+        checkTodaysAnnouncements();
       }
+
+      function setupLogin() {
+        const loginForm = document.getElementById("loginForm");
+        const usernameSearch = document.getElementById("usernameSearch");
+        const dropdown = document.getElementById("usernameDropdown");
+
+        loginForm.addEventListener("submit", handleLogin);
+
+        usernameSearch.addEventListener("input", function () {
+          const query = this.value.toLowerCase();
+          filterUsernames(query);
+        });
+
+        usernameSearch.addEventListener("focus", function () {
+          dropdown.style.display = "block";
+          filterUsernames("");
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener("click", function (e) {
+          if (
+            !usernameSearch.contains(e.target) &&
+            !dropdown.contains(e.target)
+          ) {
+            dropdown.style.display = "none";
+          }
+        });
+      }
+
+      function populateUsernames() {
+        const dropdown = document.getElementById("usernameDropdown");
+
+        // Sort family members by ID
+        const sortedFamily = [...familyData.family].sort((a, b) => a.id - b.id);
+
+        dropdown.innerHTML = "";
+        sortedFamily.forEach((member) => {
+          const option = document.createElement("div");
+          option.className = "username-option";
+          option.textContent = member.name;
+          option.addEventListener("click", function () {
+            selectUsername(member.name);
+          });
+          dropdown.appendChild(option);
+        });
+      }
+
+      function filterUsernames(query) {
+        const dropdown = document.getElementById("usernameDropdown");
+        const options = dropdown.querySelectorAll(".username-option");
+
+        let hasVisibleOptions = false;
+        options.forEach((option) => {
+          const name = option.textContent.toLowerCase();
+          if (name.includes(query)) {
+            option.style.display = "block";
+            hasVisibleOptions = true;
+          } else {
+            option.style.display = "none";
+          }
+        });
+
+        dropdown.style.display = hasVisibleOptions ? "block" : "none";
+      }
+
+      function selectUsername(username) {
+        selectedUsername = username;
+        document.getElementById("usernameSearch").value = username;
+        document.getElementById("usernameDropdown").style.display = "none";
+        document.getElementById("passwordInput").focus();
+      }
+
+      function handleLogin(e) {
+        e.preventDefault();
+
+        const password = document.getElementById("passwordInput").value;
+        const errorDiv = document.getElementById("errorMessage");
+
+        if (!selectedUsername) {
+          showError("Please select a family member");
+          return;
+        }
+
+        // Simple password verification (password: "family123")
+        const hashedPassword = simpleHash(password);
+        if (password === "family123" || hashedPassword === PASSWORD_HASH) {
+          const user = familyData.family.find(
+            (member) => member.name === selectedUsername
+          );
+          if (user) {
+            currentUser = user;
+            sessionStorage.setItem("currentUser", JSON.stringify(user));
+            showMainContent();
+            errorDiv.textContent = "";
+          } else {
+            showError("Invalid username");
+          }
+        } else {
+          showError("Invalid password");
+        }
+      }
+
+      function showError(message) {
+        document.getElementById("errorMessage").textContent = message;
+      }
+
+      function logout() {
+        sessionStorage.removeItem("currentUser");
+        currentUser = null;
+        selectedUsername = "";
+        document.getElementById("loginForm").reset();
+        showLoginPage();
+      }
+
+      // Simple hash function (same as in data.js)
+      function simpleHash(str) {
+        let hash = 0;
+        if (str.length === 0) return hash;
+        for (let i = 0; i < str.length; i++) {
+          const char = str.charCodeAt(i);
+          hash = (hash << 5) - hash + char;
+          hash = hash & hash;
+        }
+        return Math.abs(hash).toString(16);
+      }
+
       // Global variables
       let zoomLevel = 1;
       let panX = 0,
@@ -138,31 +299,9 @@
 
       // Initialize app
       document.addEventListener("DOMContentLoaded", function () {
-        initializeNavigation();
-        renderFamilyTree();
-        renderBirthdayCalendar();
-        checkTodaysBirthdays();
         initializeTreeControls();
         initializeModal();
       });
-
-      // Navigation
-      function initializeNavigation() {
-        const navBtns = document.querySelectorAll(".nav-btn");
-        const tabs = document.querySelectorAll(".tab-content");
-
-        navBtns.forEach((btn) => {
-          btn.addEventListener("click", () => {
-            const targetTab = btn.dataset.tab;
-
-            navBtns.forEach((b) => b.classList.remove("active"));
-            tabs.forEach((t) => t.classList.remove("active"));
-
-            btn.classList.add("active");
-            document.getElementById(targetTab).classList.add("active");
-          });
-        });
-      }
 
       // Calculate age
       function calculateAge(birthDate, deathDate = null) {
@@ -274,7 +413,6 @@
         enablePanning();
       }
 
-      // Create member card
       // Draw connections between family members
       function drawConnections(svg, positions) {
         // Clear existing connections
@@ -378,48 +516,11 @@
         const card = document.createElement("div");
         card.className = "member-card";
 
-        // Enhanced click handler for better mobile support
-        let cardTouchStartTime = 0;
-        let cardTouchMoved = false;
-        let cardTouchStartPos = { x: 0, y: 0 };
-
-        // Mouse click for desktop
-        card.addEventListener("click", (e) => {
+        // Simplified click handler - remove complex touch logic
+        card.addEventListener("click", function (e) {
+          e.preventDefault();
           e.stopPropagation();
           showMemberDetails(member);
-        });
-
-        // Touch events for mobile - more reliable than onclick
-        card.addEventListener("touchstart", (e) => {
-          cardTouchStartTime = Date.now();
-          cardTouchMoved = false;
-          const touch = e.touches[0];
-          cardTouchStartPos = { x: touch.clientX, y: touch.clientY };
-          e.stopPropagation(); // Prevent container touch events
-        });
-
-        card.addEventListener("touchmove", (e) => {
-          const touch = e.touches[0];
-          const moveDistance = Math.sqrt(
-            Math.pow(touch.clientX - cardTouchStartPos.x, 2) +
-              Math.pow(touch.clientY - cardTouchStartPos.y, 2)
-          );
-
-          if (moveDistance > 10) {
-            // 10px threshold
-            cardTouchMoved = true;
-          }
-        });
-
-        card.addEventListener("touchend", (e) => {
-          const touchDuration = Date.now() - cardTouchStartTime;
-
-          // Only trigger if it was a quick tap without much movement
-          if (!cardTouchMoved && touchDuration < 500) {
-            e.preventDefault();
-            e.stopPropagation();
-            showMemberDetails(member);
-          }
         });
 
         // Keep your existing avatar, name, info code exactly as is
@@ -457,7 +558,6 @@
 
         return card;
       }
-      // CSS for avatar images
       function initializeTreeControls() {
         document.getElementById("zoom-in").onclick = () => {
           zoomLevel *= 1.2;
@@ -563,7 +663,6 @@
         });
 
         // Touch events for mobile
-        // Replace your existing touchstart event with this:
         container.addEventListener("touchstart", (e) => {
           // Don't prevent default if touching a member card
           if (e.target.closest(".member-card")) {
@@ -600,6 +699,7 @@
             };
           }
         });
+
         container.addEventListener("touchmove", (e) => {
           e.preventDefault();
           touches = Array.from(e.touches);
@@ -782,954 +882,212 @@
         treeSvg.style.transformOrigin = "0 0";
       }
 
-      // Check today's birthdays
-      function checkTodaysBirthdays() {
+      // Check today's announcements
+      function checkTodaysAnnouncements() {
         const today = new Date();
-        const todayStr = `${String(today.getMonth() + 1).padStart(
-          2,
-          "0"
-        )}-${String(today.getDate()).padStart(2, "0")}`;
+        const todayStr = today.toISOString().split("T")[0]; // YYYY-MM-DD format
+        const currentHour = today.getHours();
 
-        const birthdayMembers = familyData.family.filter((member) => {
-          const birthDate = new Date(member.birthDate);
-          const birthStr = `${String(birthDate.getMonth() + 1).padStart(
-            2,
-            "0"
-          )}-${String(birthDate.getDate()).padStart(2, "0")}`;
-          return birthStr === todayStr && !member.deathDate;
-        });
-
-        const container = document.getElementById("birthday-cards");
-        container.innerHTML = "";
-
-        if (birthdayMembers.length > 0) {
-          document.getElementById("today-birthdays").style.display = "block";
-          birthdayMembers.forEach((member, index) => {
-            const card = createBirthdayCard(member);
-            card.style.animationDelay = `${index * 0.2}s`;
-            container.appendChild(card);
-          });
-        } else {
-          document.getElementById("today-birthdays").style.display = "none";
-        }
-      }
-
-      // Create birthday card
-      function createBirthdayCard(member) {
-        const card = document.createElement("div");
-        card.className = "birthday-card";
-        card.onclick = () => showMemberDetails(member);
-
-        card.innerHTML = `
-    <div class="birthday-avatar">${member.avatar}</div>
-    <div class="birthday-info">
-        <h3>${member.name}</h3>
-        <p>Turns ${calculateAge(member.birthDate) + 1} today!</p>
-    </div>
-  `;
-
-        return card;
-      }
-
-      // Render birthday calendar
-      function renderBirthdayCalendar() {
-        const container = document.getElementById("calendar-grid");
-        container.innerHTML = "";
-
-        // Create calendar for current year
-        const currentYear = new Date().getFullYear();
-        const today = new Date();
-        const currentMonth = today.getMonth();
-        const currentDay = today.getDate();
-
-        const months = [
-          "January",
-          "February",
-          "March",
-          "April",
-          "May",
-          "June",
-          "July",
-          "August",
-          "September",
-          "October",
-          "November",
-          "December",
-        ];
-
-        months.forEach((month, monthIndex) => {
-          const monthContainer = document.createElement("div");
-          monthContainer.className = "calendar-month";
-
-          const monthHeader = document.createElement("h3");
-          monthHeader.textContent = month;
-          monthContainer.appendChild(monthHeader);
-
-          const daysGrid = document.createElement("div");
-          daysGrid.className = "days-grid";
-
-          const daysInMonth = new Date(
-            currentYear,
-            monthIndex + 1,
-            0
-          ).getDate();
-
-          for (let day = 1; day <= daysInMonth; day++) {
-            const dayElement = document.createElement("div");
-            dayElement.className = "calendar-day";
-            dayElement.textContent = day;
-
-            // Check if this is today's date
-            if (monthIndex === currentMonth && day === currentDay) {
-              dayElement.classList.add("current-day");
-            }
-
-            // Check for birthdays on this date
-            const dateStr = `${currentYear}-${String(monthIndex + 1).padStart(
-              2,
-              "0"
-            )}-${String(day).padStart(2, "0")}`;
-            const birthdaysOnDate = familyData.family.filter((member) => {
-              const birthDate = new Date(member.birthDate);
-              return (
-                birthDate.getMonth() === monthIndex &&
-                birthDate.getDate() === day
-              );
-            });
-
-            if (birthdaysOnDate.length > 0) {
-              dayElement.classList.add("has-birthday");
-              dayElement.onclick = () =>
-                showBirthdayDetails(birthdaysOnDate, `${month} ${day}`);
-            }
-
-            daysGrid.appendChild(dayElement);
+        // Check if there are announcements for today
+        const todaysAnnouncements = announcementsData.announcements.filter(
+          (announcement) => {
+            const announcementDate = announcement.date.split("T")[0];
+            return announcementDate === todayStr;
           }
-
-          monthContainer.appendChild(daysGrid);
-          container.appendChild(monthContainer);
-        });
-      }
-
-      // Show member details modal
-      function showMemberDetails(member) {
-        const modal = document.getElementById("member-modal");
-        const modalBody = document.getElementById("modal-body");
-
-        const age = member.deathDate
-          ? `Lived ${calculateAge(member.birthDate, member.deathDate)} years`
-          : `Age ${calculateAge(member.birthDate)}`;
-
-        // Get father (via parentId) and mother (parentId + 1)
-        const father = familyData.family.find((m) => m.id === member.parentId);
-        const mother = member.parentId
-          ? familyData.family.find((m) => m.id === member.parentId + 1)
-          : null;
-
-        // Get children (anyone who has this member's id as their parentId)
-        const children = familyData.family.filter(
-          (m) => m.parentId === member.id
         );
 
-        // Add only if father exists
-        let familyInfo = "";
-        if (father) {
-          familyInfo += `<p style="margin: 10px 0;"><strong>Father:</strong> ${father.name}</p>`;
-          if (mother) {
-            familyInfo += `<p style="margin: 10px 0;"><strong>Mother:</strong> ${mother.name}</p>`;
+        const notificationDot = document.getElementById("notification-dot");
+
+        if (todaysAnnouncements.length > 0) {
+          // Show notification dot
+          if (notificationDot) {
+            notificationDot.style.display = "block";
+          }
+
+          // Create unique keys for morning (9am-6pm) and evening (6pm-9am) sessions
+          const sessionKey =
+            currentHour >= 9 && currentHour < 18 ? "morning" : "evening";
+          const storageKey = `announcements_shown_${todayStr}_${sessionKey}`;
+
+          // Check if announcements were already shown for this session today
+          if (sessionStorage.getItem(storageKey)) {
+            return; // Already shown for this time period today
+          }
+
+          showTodaysAnnouncements(todaysAnnouncements);
+          // Mark as shown for this session
+          sessionStorage.setItem(storageKey, "true");
+        } else {
+          // Hide notification dot if no announcements
+          if (notificationDot) {
+            notificationDot.style.display = "none";
           }
         }
-
-        if (children.length > 0) {
-          const childrenNames = children.map((child) => child.name).join(", ");
-          familyInfo += `<p style="margin: 10px 0;"><strong>Children:</strong> ${childrenNames}</p>`;
-        }
-
-        modalBody.innerHTML = `
-    <div style="display: flex; gap: 20px; align-items: flex-start;">
-      <div style="flex-shrink: 0;">
-        <img src="${member.avatar}"
-        }" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px;">
-      </div>
-      <div style="flex: 1;">
-        <h2 style="margin: 0 0 10px 0;">${member.name}</h2>
-        <p style="margin: 10px 0;"><strong>Born:</strong> ${new Date(
-          member.birthDate
-        ).toLocaleDateString()}</p>
-        ${
-          member.deathDate
-            ? `<p style="margin: 10px 0;"><strong>Died:</strong> ${new Date(
-                member.deathDate
-              ).toLocaleDateString()}</p>`
-            : ""
-        }
-        <p style="margin: 10px 0;"><strong>${
-          member.deathDate ? "Lived" : "Age"
-        }:</strong> ${age}</p>
-        <p style="margin: 10px 0;"><strong>Generation:</strong> ${
-          member.generation
-        }</p>
-        ${familyInfo}
-      </div>
-    </div>
-  `;
-
-        modal.style.display = "block";
-        modal.classList.add("show");
       }
+      // Show today's announcements
+      function showTodaysAnnouncements(announcements) {
+        const modal = document.getElementById("announcement-modal");
+        const modalBody = document.getElementById("announcement-modal-body");
 
-      // Show birthday details
-      function showBirthdayDetails(members, date) {
-        const modal = document.getElementById("member-modal");
-        const modalBody = document.getElementById("modal-body");
+        modalBody.innerHTML = "";
 
-        let content = `<h2>Birthdays on ${date}</h2>`;
-        const today = new Date();
-
-        members.forEach((member) => {
-          let ageText = "";
-
-          if (member.deathDate) {
-            ageText = `Would be ${calculateAge(member.birthDate)} years old`;
-          } else {
-            const birthDate = new Date(member.birthDate);
-            const birthdayThisYear = new Date(
-              today.getFullYear(),
-              birthDate.getMonth(),
-              birthDate.getDate()
-            );
-
-            const currentAge = calculateAge(member.birthDate);
-
-            if (birthdayThisYear < today) {
-              // Birthday has already passed this year
-              ageText = `Will turn ${currentAge + 1} next year`;
-            } else {
-              // Birthday is upcoming or today
-              ageText = `Turns ${currentAge + 1}`;
+        announcements.forEach((announcement) => {
+          const announcementDiv = document.createElement("div");
+          announcementDiv.className = "announcement-item";
+          announcementDiv.innerHTML = `
+            <h3>${announcement.heading}</h3>
+            <p>${announcement.content}</p>
+            ${
+              announcement.image
+                ? `<img src="${announcement.image}" alt="${announcement.heading}" style="max-width: 100%; height: auto; margin-top: 10px;">`
+                : ""
             }
-          }
-
-          content += `
-      <div class="modal-member" style="display: flex; gap: 15px; align-items: center; margin-bottom: 15px;">
-        <div class="modal-avatar" style="flex-shrink: 0; margin-top: 20px;">
-          <img src="${member.avatar}" style="width: 100px; height: 100px; object-fit: cover;">
-        </div>
-        <div>
-          <h3 style="margin: 0;">${member.name}</h3>
-          <p style="margin: 5px 0 0 0;">${ageText}</p>
-        </div>
-      </div>
-    `;
+            <small>Posted: ${new Date(
+              announcement.date
+            ).toLocaleDateString()}</small>
+          `;
+          modalBody.appendChild(announcementDiv);
         });
 
-        modalBody.innerHTML = content;
         modal.style.display = "block";
         modal.classList.add("show");
       }
 
       // Initialize modal
       function initializeModal() {
-        const modal = document.getElementById("member-modal");
-        const closeBtn = document.querySelector(".close");
+        const memberModal = document.getElementById("member-modal");
+        const memberModalClose = document.getElementById("modal-close");
+        const announcementModal = document.getElementById("announcement-modal");
+        const announcementModalClose =
+          document.getElementById("announcement-close");
 
-        closeBtn.onclick = () => {
-          modal.classList.remove("show");
-          setTimeout(() => {
-            modal.style.display = "none";
-          }, 300);
-        };
-
-        window.onclick = (e) => {
-          if (e.target === modal) {
-            modal.classList.remove("show");
+        // Member modal close
+        if (memberModalClose) {
+          memberModalClose.onclick = function () {
+            memberModal.classList.remove("show");
             setTimeout(() => {
-              modal.style.display = "none";
+              memberModal.style.display = "none";
+            }, 300);
+          };
+        }
+
+        // Announcement modal close
+        if (announcementModalClose) {
+          announcementModalClose.onclick = function () {
+            announcementModal.classList.remove("show");
+            setTimeout(() => {
+              announcementModal.style.display = "none";
+            }, 300);
+          };
+        }
+
+        // Close modals when clicking outside
+        window.onclick = function (event) {
+          if (event.target === memberModal) {
+            memberModal.classList.remove("show");
+            setTimeout(() => {
+              memberModal.style.display = "none";
+            }, 300);
+          }
+          if (event.target === announcementModal) {
+            announcementModal.classList.remove("show");
+            setTimeout(() => {
+              announcementModal.style.display = "none";
             }, 300);
           }
         };
+
+        // Add escape key support
+        document.addEventListener("keydown", function (e) {
+          if (e.key === "Escape") {
+            memberModal.classList.remove("show");
+            announcementModal.classList.remove("show");
+            setTimeout(() => {
+              memberModal.style.display = "none";
+              announcementModal.style.display = "none";
+            }, 300);
+          }
+        });
+      }
+      // Show member details
+      function showMemberDetails(member) {
+        const modal = document.getElementById("member-modal");
+        const modalBody = document.getElementById("modal-body");
+
+        // Find spouse if exists
+        const spouse = member.spouseId
+          ? familyData.family.find((m) => m.id === member.spouseId)
+          : null;
+
+        // Find children
+        const children = familyData.family.filter(
+          (m) => m.parentId === member.id
+        );
+
+        // Find parent
+        const parent = member.parentId
+          ? familyData.family.find((m) => m.id === member.parentId)
+          : null;
+
+        modalBody.innerHTML = `
+          <div class="member-details">
+            <div class="member-avatar-large">
+              ${
+                member.avatar &&
+                (member.avatar.startsWith("http://") ||
+                  member.avatar.startsWith("https://"))
+                  ? `<img src="${member.avatar}" alt="${member.name}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`
+                  : `<div style="font-size: 60px;">${
+                      member.avatar || "👤"
+                    }</div>`
+              }
+            </div>
+            <h2>${member.name}</h2>
+            <p><strong>Age:</strong> ${
+              member.deathDate
+                ? `${calculateAge(
+                    member.birthDate,
+                    member.deathDate
+                  )} (deceased)`
+                : calculateAge(member.birthDate)
+            }</p>
+            <p><strong>Birth Date:</strong> ${new Date(
+              member.birthDate
+            ).toLocaleDateString()}</p>
+            ${
+              member.deathDate
+                ? `<p><strong>Death Date:</strong> ${new Date(
+                    member.deathDate
+                  ).toLocaleDateString()}</p>`
+                : ""
+            }
+            <p><strong>Generation:</strong> ${member.generation}</p>
+            ${spouse ? `<p><strong>Spouse:</strong> ${spouse.name}</p>` : ""}
+            ${parent ? `<p><strong>Parent:</strong> ${parent.name}</p>` : ""}
+            ${
+              children.length > 0
+                ? `<p><strong>Children:</strong> ${children
+                    .map((child) => child.name)
+                    .join(", ")}</p>`
+                : ""
+            }
+            ${
+              member.occupation
+                ? `<p><strong>Occupation:</strong> ${member.occupation}</p>`
+                : ""
+            }
+            ${
+              member.location
+                ? `<p><strong>Location:</strong> ${member.location}</p>`
+                : ""
+            }
+            ${member.bio ? `<p><strong>Bio:</strong> ${member.bio}</p>` : ""}
+          </div>
+        `;
+
+        modal.style.display = "block";
+        modal.classList.add("show");
       }
     </script>
-
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-
-      body {
-        font-family: "Arial", sans-serif;
-        background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
-        color: #333;
-        overflow-x: hidden;
-        background-color: black;
-        user-select: none;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-      }
-
-      /* Navigation */
-      .navbar {
-        background: linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 100%);
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        z-index: 1000;
-      }
-
-      .nav-container {
-        max-width: 1200px;
-        margin: 0 auto;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0 2rem;
-      }
-
-      .nav-logo {
-        color: white;
-        font-size: 1.8rem;
-        font-weight: bold;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-      }
-
-      .nav-menu {
-        display: flex;
-        gap: 1rem;
-      }
-
-      .nav-btn {
-        background: transparent;
-        border: 2px solid rgba(255, 255, 255, 0.3);
-        color: white;
-        padding: 0.8rem 1.5rem;
-        border-radius: 25px;
-        cursor: pointer;
-        font-size: 1rem;
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
-      }
-
-      .nav-btn::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(
-          90deg,
-          transparent,
-          rgba(255, 255, 255, 0.2),
-          transparent
-        );
-        transition: left 0.5s;
-      }
-
-      .nav-btn:hover::before {
-        left: 100%;
-      }
-
-      .nav-btn:hover {
-        border-color: white;
-        box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
-        transform: translateY(-2px);
-      }
-
-      .nav-btn.active {
-        background: white;
-        color: #333;
-        border-color: white;
-        box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
-      }
-
-      /* Tab Content */
-      .tab-content {
-        display: none;
-        padding-top: 100px;
-        min-height: 100vh;
-        opacity: 0;
-        transform: translateY(20px);
-        transition: all 0.5s ease;
-      }
-
-      .tab-content.active {
-        display: block;
-        opacity: 1;
-        transform: translateY(0);
-      }
-
-      /* Today's Birthdays */
-      .today-section {
-        background: linear-gradient(135deg, #ffffff 0%, #f8f8f8 100%);
-        margin: 2rem;
-        padding: 2rem;
-        border-radius: 20px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        border: 1px solid rgba(0, 0, 0, 0.05);
-      }
-
-      .today-section h2 {
-        text-align: center;
-        margin-bottom: 2rem;
-        color: #333;
-        font-size: 2rem;
-        position: relative;
-      }
-
-      .today-section h2::after {
-        content: "";
-        position: absolute;
-        bottom: -10px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 100px;
-        height: 3px;
-        background: linear-gradient(90deg, #333, #666);
-        border-radius: 2px;
-      }
-
-      .birthday-cards {
-        display: flex;
-        gap: 2rem;
-        justify-content: center;
-        flex-wrap: wrap;
-      }
-
-      .birthday-card {
-        background: linear-gradient(135deg, #ffffff 0%, #f5f5f5 100%);
-        border: 2px solid #333;
-        border-radius: 15px;
-        padding: 1.5rem;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        animation: slideInUp 0.6s ease both;
-        position: relative;
-        overflow: hidden;
-      }
-
-      .birthday-card::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(
-          90deg,
-          transparent,
-          rgba(0, 0, 0, 0.1),
-          transparent
-        );
-        transition: left 0.5s;
-      }
-
-      .birthday-card:hover::before {
-        left: 100%;
-      }
-
-      .birthday-card:hover {
-        transform: translateY(-10px) scale(1.05);
-        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
-        border-color: #000;
-      }
-
-      .birthday-avatar {
-        font-size: 3rem;
-        animation: bounce 2s infinite;
-      }
-
-      .birthday-info h3 {
-        margin-bottom: 0.5rem;
-        color: #333;
-      }
-
-      .birthday-info p {
-        color: #666;
-        font-style: italic;
-      }
-
-      /* Tree Controls */
-      .tree-controls {
-        display: flex;
-        justify-content: center;
-        gap: 1rem;
-        margin: 2rem;
-      }
-
-      .control-btn {
-        background: linear-gradient(135deg, #333 0%, #555 100%);
-        color: white;
-        border: none;
-        padding: 0.8rem 1.5rem;
-        border-radius: 25px;
-        cursor: pointer;
-        font-size: 1rem;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-      }
-
-      .control-btn:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-        background: linear-gradient(135deg, #555 0%, #333 100%);
-      }
-
-      /* Family Tree */
-      .tree-container {
-        position: relative;
-        height: 600px;
-        overflow: hidden;
-        cursor: grab;
-        background-size: 20px 20px;
-        background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
-        border-radius: 20px;
-        margin: 2rem;
-        box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.1);
-      }
-
-      .tree-container:active {
-        cursor: grabbing;
-      }
-
-      .tree-members {
-        position: absolute;
-        top: 0;
-        left: 0;
-        transition: transform 0.3s ease;
-      }
-
-      .tree-svg {
-        position: absolute;
-        top: 0;
-        left: 0;
-        pointer-events: none;
-        transition: transform 0.3s ease;
-      }
-
-      .member-card {
-        position: absolute;
-        background: linear-gradient(135deg, #ffffff 0%, #f8f8f8 100%);
-        border: 2px solid #333;
-        border-radius: 15px;
-        padding: 1rem;
-        width: 160px;
-        text-align: center;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-        transform-origin: center;
-        touch-action: manipulation;
-        -webkit-user-select: none;
-        user-select: none;
-      }
-
-      #tree-container {
-        touch-action: none;
-        -webkit-user-select: none;
-        user-select: none;
-      }
-      .member-card:hover {
-        transform: scale(1.1) translateY(-10px);
-        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
-        border-color: #000;
-        z-index: 100;
-      }
-
-      .member-avatar {
-        font-size: 2.5rem;
-        margin-bottom: 0.5rem;
-        animation: float 3s ease-in-out infinite;
-      }
-
-      .member-name {
-        font-weight: bold;
-        color: #333;
-        margin-bottom: 0.5rem;
-        font-size: 0.9rem;
-      }
-
-      .member-info {
-        color: #666;
-        font-size: 0.8rem;
-      }
-
-      /* Connection Lines */
-      .connection-line {
-        transition: all 0.3s ease;
-      }
-
-      .connection-line:hover {
-        stroke-width: 4;
-        stroke: #000;
-      }
-
-      .spouse-line {
-        transition: all 0.3s ease;
-      }
-
-      .spouse-line:hover {
-        stroke-width: 5;
-        stroke: #000;
-      }
-
-      /* Birthday Calendar */
-      .calendar-container {
-        padding: 2rem;
-        max-width: 1200px;
-        margin: 0 auto;
-      }
-
-      .calendar-container h2 {
-        text-align: center;
-        margin-bottom: 3rem;
-        color: #333;
-        font-size: 2.5rem;
-        position: relative;
-      }
-
-      .calendar-container h2::after {
-        content: "";
-        position: absolute;
-        bottom: -15px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 150px;
-        height: 4px;
-        background: linear-gradient(90deg, #333, #666);
-        border-radius: 2px;
-      }
-
-      .calendar-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 2rem;
-      }
-
-      .calendar-month {
-        background: linear-gradient(135deg, #ffffff 0%, #f8f8f8 100%);
-        border-radius: 20px;
-        padding: 1.5rem;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        border: 1px solid rgba(0, 0, 0, 0.05);
-        transition: all 0.3s ease;
-      }
-
-      .calendar-month:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-      }
-
-      .calendar-month h3 {
-        text-align: center;
-        margin-bottom: 1rem;
-        color: #333;
-        font-size: 1.3rem;
-        padding-bottom: 0.5rem;
-        border-bottom: 2px solid #333;
-      }
-
-      .days-grid {
-        display: grid;
-        grid-template-columns: repeat(7, 1fr);
-        gap: 0.3rem;
-      }
-
-      .calendar-day {
-        aspect-ratio: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-size: 0.9rem;
-        font-weight: 500;
-        position: relative;
-        background: rgba(0, 0, 0, 0.02);
-      }
-
-      .calendar-day:hover {
-        background: rgba(0, 0, 0, 0.1);
-        transform: scale(1.1);
-      }
-
-      .calendar-day.has-birthday {
-        background: linear-gradient(135deg, #333 0%, #555 100%);
-        color: white;
-        font-weight: bold;
-        animation: pulse 2s infinite;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-      }
-
-      .calendar-day.has-birthday:hover {
-        background: linear-gradient(135deg, #000 0%, #333 100%);
-        transform: scale(1.2);
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
-      }
-
-      .calendar-day.has-birthday::after {
-        content: "🎂";
-        position: absolute;
-        top: -5px;
-        right: -5px;
-        font-size: 0.7rem;
-        animation: bounce 1s infinite;
-      }
-
-      /* Modal */
-      .modal {
-        display: none;
-        position: fixed;
-        z-index: 2000;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-        backdrop-filter: blur(5px);
-        opacity: 0;
-        transition: all 0.3s ease;
-      }
-
-      .modal.show {
-        opacity: 1;
-      }
-
-      .modal-content {
-        background: linear-gradient(135deg, #ffffff 0%, #f8f8f8 100%);
-        margin: 5% auto;
-        padding: 2rem;
-        border-radius: 20px;
-        width: 90%;
-        max-width: 500px;
-        position: relative;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        transform: scale(0.7);
-        transition: all 0.3s ease;
-        border: 2px solid #333;
-      }
-
-      .modal.show .modal-content {
-        transform: scale(1);
-      }
-
-      .close {
-        color: #333;
-        float: right;
-        font-size: 2rem;
-        font-weight: bold;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        position: absolute;
-        right: 1rem;
-        top: 1rem;
-        width: 40px;
-        height: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50%;
-        background: rgba(0, 0, 0, 0.1);
-      }
-
-      .close:hover {
-        background: rgba(0, 0, 0, 0.2);
-        transform: rotate(90deg);
-      }
-
-      .modal-member {
-        text-align: center;
-        padding: 1rem;
-      }
-
-      .modal-avatar {
-        font-size: 4rem;
-        margin-bottom: 1rem;
-        animation: bounce 1s ease-in-out;
-      }
-
-      .modal-member h2 {
-        color: #333;
-        margin-bottom: 1rem;
-        font-size: 1.8rem;
-      }
-
-      .modal-member h3 {
-        color: #333;
-        margin-bottom: 0.5rem;
-        font-size: 1.3rem;
-      }
-
-      .modal-member p {
-        color: #666;
-        margin-bottom: 0.5rem;
-        font-size: 1rem;
-      }
-
-      /* Animations */
-      @keyframes slideInUp {
-        from {
-          opacity: 0;
-          transform: translateY(30px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      @keyframes bounce {
-        0%,
-        20%,
-        53%,
-        80%,
-        100% {
-          transform: translateY(0);
-        }
-        40%,
-        43% {
-          transform: translateY(-10px);
-        }
-        70% {
-          transform: translateY(-5px);
-        }
-        90% {
-          transform: translateY(-3px);
-        }
-      }
-
-      @keyframes float {
-        0%,
-        100% {
-          transform: translateY(0px);
-        }
-        50% {
-          transform: translateY(-10px);
-        }
-      }
-
-      @keyframes pulse {
-        0% {
-          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-        }
-        50% {
-          box-shadow: 0 4px 25px rgba(0, 0, 0, 0.5);
-        }
-        100% {
-          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-        }
-      }
-
-      /* Responsive Design */
-      @media (max-width: 768px) {
-        .nav-container {
-          flex-direction: column;
-          gap: 1rem;
-          padding: 1rem;
-        }
-
-        .calendar-grid {
-          grid-template-columns: 1fr;
-        }
-
-        .tree-container {
-          height: 400px;
-          margin: 1rem;
-        }
-
-        .today-section {
-          margin: 1rem;
-          padding: 1rem;
-        }
-
-        .birthday-cards {
-          flex-direction: column;
-          align-items: center;
-        }
-
-        .modal-content {
-          width: 95%;
-          margin: 10% auto;
-        }
-      }
-      .calendar-day.current-day {
-        background-color: #e74c3c;
-        color: white;
-        font-weight: bold;
-        border: 2px solid #c0392b;
-      }
-
-      /* If the current day also has a birthday, you might want to style it differently */
-      .calendar-day.current-day.has-birthday {
-        background-color: #8e44ad; /* Purple for current day with birthday */
-        border: 2px solid #732d91;
-      }
-
-      .member-avatar {
-        font-size: 2.5rem;
-        margin-bottom: 0.5rem;
-        animation: float 3s ease-in-out infinite;
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 0.5rem auto;
-        background: #f0f0f0;
-        overflow: hidden;
-        border: 2px solid #ddd;
-      }
-
-      .member-avatar img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        border-radius: 50%;
-      }
-      #login-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        height: 100vh;
-        background: #000;
-        color: #fff;
-      }
-
-      #login-container input {
-        padding: 10px;
-        margin: 10px;
-        border-radius: 5px;
-        border: none;
-        width: 200px;
-      }
-
-      #login-container button {
-        padding: 10px 20px;
-        background: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-      }
-
-      #main-content {
-        display: none;
-        padding: 20px;
-      }
-      a {
-        color: white;
-        text-decoration: none;
-      }
-    </style>
   </body>
 </html>
