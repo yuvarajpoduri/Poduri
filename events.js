@@ -2,13 +2,13 @@ const announcementsData = {
   announcements: [
     {
       id: 1,
-      heading: "New Family Photo Gallery!",
+      heading: "Happy 26th Birthday, Poduri Mounika! 🎉🎂",
       content:
-        "Hey fam! 📸 We've added a brand new Gallery feature to our website where you can upload your precious memories! Tag your photos with the location and event name—whether it's Grandma's 80th birthday bash, our temple trip, or a cozy Sunday lunch. Let’s build our family album together, one happy moment at a time! ❤️",
+        "Hey fam! 💖 Today we’re showering all our love and warmest wishes on our amazing Poduri Mounika, who turns 26 today! 🎈🎁 May this new year bring you endless joy, success, and beautiful memories. Let’s make her day extra special—drop your wishes and let her feel the whole family’s love from every corner. ❤️🥳",
       image:
-        "https://images.squarespace-cdn.com/content/v1/5ec689480cc22c2d441e152f/1596827958143-DFUFPS9P6JXQ5L4UGE52/family-photography-gallery-wall-greenwich-ct-photographer-entry.jpeg",
-      date: "2025-06-27T06:30:00Z",
-      timestamp: "2025-06-27T06:30:00Z",
+        "https://cdn.pixabay.com/photo/2020/10/23/07/02/happy-birthday-5671349_1280.jpg",
+      date: "2025-06-28T08:00:00Z",
+      timestamp: "2025-06-28T08:00:00Z",
     },
   ],
 };
