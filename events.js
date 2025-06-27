@@ -1,15 +1,14 @@
-// Announcements Data
 const announcementsData = {
   announcements: [
     {
       id: 1,
-      heading: "Family Reunion 2025",
+      heading: "New Family Photo Gallery!",
       content:
-        "We are excited to announce our annual family reunion scheduled for July 15, 2025. The event will be held at Riverside Park from 10 AM to 6 PM. Please bring your families and join us for a day filled with games, food, and memories. RSVP by June 30th.",
+        "Hey fam! 📸 We've added a brand new Gallery feature to our website where you can upload your precious memories! Tag your photos with the location and event name—whether it's Grandma's 80th birthday bash, our temple trip, or a cozy Sunday lunch. Let’s build our family album together, one happy moment at a time! ❤️",
       image:
-        "https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=400",
-      date: "2025-06-26T09:00:00Z",
-      timestamp: "2025-06-26T09:00:00Z",
+        "https://images.squarespace-cdn.com/content/v1/5ec689480cc22c2d441e152f/1596827958143-DFUFPS9P6JXQ5L4UGE52/family-photography-gallery-wall-greenwich-ct-photographer-entry.jpeg",
+      date: "2025-06-27T06:30:00Z",
+      timestamp: "2025-06-27T06:30:00Z",
     },
   ],
 };
