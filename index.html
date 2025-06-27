@@ -706,74 +706,289 @@
         treeSvg.style.transformOrigin = "0 0";
       }
 
-      function checkTodaysAnnouncements() {
-        const today = new Date();
-        const todayStr = today.toISOString().split("T")[0]; // YYYY-MM-DD format
+      // Replace your existing checkTodaysAnnouncements function with this improved version
 
-        // Create a unique session key for today's announcements
-        const sessionKey = `announcements_shown_${todayStr}`;
+function checkTodaysAnnouncements() {
+    const today = new Date();
+    const todayStr = today.toISOString().split("T")[0]; // YYYY-MM-DD format
 
-        // Check if announcements have already been shown today in this session
-        const alreadyShown = sessionStorage.getItem(sessionKey);
+    // Create multiple storage keys for better persistence
+    const sessionKey = `announcements_shown_${todayStr}`;
+    const localStorageKey = `announcements_shown_${todayStr}_local`;
+    const cookieKey = `announcements_shown_${todayStr}`;
 
-        // Check if there are announcements for today
-        const todaysAnnouncements = announcementsData.announcements.filter(
-          (announcement) => {
+    // Check multiple storage methods for better mobile compatibility
+    const sessionShown = sessionStorage.getItem(sessionKey);
+    const localShown = localStorage.getItem(localStorageKey);
+    const cookieShown = getCookie(cookieKey);
+
+    // If any storage method says it's been shown, don't show again
+    const alreadyShown = sessionShown || localShown || cookieShown;
+
+    // Check if there are announcements for today
+    const todaysAnnouncements = announcementsData.announcements.filter(
+        (announcement) => {
             const announcementDate = announcement.date.split("T")[0];
             return announcementDate === todayStr;
-          }
-        );
-
-        const notificationDot = document.getElementById("notification-dot");
-
-        if (todaysAnnouncements.length > 0) {
-          // Show notification dot
-          if (notificationDot) {
-            notificationDot.style.display = "block";
-          }
-
-          // Show announcements only if not already shown in this session
-          if (!alreadyShown) {
-            showTodaysAnnouncements(todaysAnnouncements);
-            // Mark as shown for this session
-            sessionStorage.setItem(sessionKey, "true");
-          }
-        } else {
-          // Hide notification dot if no announcements
-          if (notificationDot) {
-            notificationDot.style.display = "none";
-          }
         }
-      }
-      // Show today's announcements
-      function showTodaysAnnouncements(announcements) {
-        const modal = document.getElementById("announcement-modal");
-        const modalBody = document.getElementById("announcement-modal-body");
+    );
 
-        modalBody.innerHTML = "";
+    const notificationDot = document.getElementById("notification-dot");
 
-        announcements.forEach((announcement) => {
-          const announcementDiv = document.createElement("div");
-          announcementDiv.className = "announcement-item";
-          announcementDiv.innerHTML = `
+    if (todaysAnnouncements.length > 0) {
+        // Show notification dot
+        if (notificationDot) {
+            notificationDot.style.display = "block";
+        }
+
+        // Show announcements only if not already shown
+        if (!alreadyShown) {
+            showTodaysAnnouncements(todaysAnnouncements);
+            // Mark as shown in multiple storage methods
+            markAnnouncementsAsShown(todayStr);
+        }
+    } else {
+        // Hide notification dot if no announcements
+        if (notificationDot) {
+            notificationDot.style.display = "none";
+        }
+    }
+
+    // Clean up old announcement records (older than 7 days)
+    cleanupOldAnnouncementRecords();
+}
+
+// Function to mark announcements as shown in multiple storage methods
+function markAnnouncementsAsShown(dateStr) {
+    const sessionKey = `announcements_shown_${dateStr}`;
+    const localStorageKey = `announcements_shown_${dateStr}_local`;
+    const cookieKey = `announcements_shown_${dateStr}`;
+    
+    try {
+        // Session storage
+        sessionStorage.setItem(sessionKey, "true");
+        
+        // Local storage (persists across browser sessions)
+        localStorage.setItem(localStorageKey, "true");
+        
+        // Cookie (works even in private/incognito mode sometimes)
+        setCookie(cookieKey, "true", 1); // Expires in 1 day
+        
+        // Also store a timestamp for when it was shown
+        const timestamp = new Date().getTime();
+        sessionStorage.setItem(`${sessionKey}_time`, timestamp);
+        localStorage.setItem(`${localStorageKey}_time`, timestamp);
+        
+    } catch (error) {
+        console.log("Storage not available, using memory fallback");
+        // Fallback to memory storage if all else fails
+        if (!window.announcementMemory) {
+            window.announcementMemory = {};
+        }
+        window.announcementMemory[dateStr] = true;
+    }
+}
+
+// Cookie helper functions
+function setCookie(name, value, days) {
+    try {
+        const expires = new Date();
+        expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
+        document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
+    } catch (error) {
+        console.log("Cookies not available");
+    }
+}
+
+function getCookie(name) {
+    try {
+        const nameEQ = name + "=";
+        const ca = document.cookie.split(';');
+        for (let i = 0; i < ca.length; i++) {
+            let c = ca[i];
+            while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+            if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+        }
+        return null;
+    } catch (error) {
+        return null;
+    }
+}
+
+// Clean up old storage records to prevent accumulation
+function cleanupOldAnnouncementRecords() {
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    
+    try {
+        // Clean sessionStorage
+        Object.keys(sessionStorage).forEach(key => {
+            if (key.startsWith('announcements_shown_')) {
+                const dateStr = key.replace('announcements_shown_', '').replace('_time', '').replace('_local', '');
+                const recordDate = new Date(dateStr);
+                if (recordDate < sevenDaysAgo) {
+                    sessionStorage.removeItem(key);
+                }
+            }
+        });
+
+        // Clean localStorage
+        Object.keys(localStorage).forEach(key => {
+            if (key.startsWith('announcements_shown_')) {
+                const dateStr = key.replace('announcements_shown_', '').replace('_time', '').replace('_local', '');
+                const recordDate = new Date(dateStr);
+                if (recordDate < sevenDaysAgo) {
+                    localStorage.removeItem(key);
+                }
+            }
+        });
+    } catch (error) {
+        console.log("Cleanup not possible");
+    }
+}
+
+// Alternative approach: Time-based checking
+function checkTodaysAnnouncementsWithTimeLimit() {
+    const today = new Date();
+    const todayStr = today.toISOString().split("T")[0];
+    const now = new Date().getTime();
+    
+    // Check if announcements were shown in the last 6 hours
+    const timeLimit = 6 * 60 * 60 * 1000; // 6 hours in milliseconds
+    const lastShownKey = `announcements_last_shown_${todayStr}`;
+    
+    try {
+        const lastShown = localStorage.getItem(lastShownKey) || sessionStorage.getItem(lastShownKey);
+        
+        if (lastShown && (now - parseInt(lastShown)) < timeLimit) {
+            // Don't show if shown within the last 6 hours
+            return;
+        }
+    } catch (error) {
+        // Storage not available, use memory fallback
+        if (window.announcementMemory && window.announcementMemory[todayStr]) {
+            const lastShownTime = window.announcementMemory[`${todayStr}_time`];
+            if (lastShownTime && (now - lastShownTime) < timeLimit) {
+                return;
+            }
+        }
+    }
+
+    // Continue with showing announcements logic...
+    const todaysAnnouncements = announcementsData.announcements.filter(
+        (announcement) => {
+            const announcementDate = announcement.date.split("T")[0];
+            return announcementDate === todayStr;
+        }
+    );
+
+    if (todaysAnnouncements.length > 0) {
+        showTodaysAnnouncements(todaysAnnouncements);
+        
+        // Mark as shown with timestamp
+        try {
+            localStorage.setItem(lastShownKey, now.toString());
+            sessionStorage.setItem(lastShownKey, now.toString());
+        } catch (error) {
+            if (!window.announcementMemory) {
+                window.announcementMemory = {};
+            }
+            window.announcementMemory[todayStr] = true;
+            window.announcementMemory[`${todayStr}_time`] = now;
+        }
+    }
+}
+
+// Enhanced version with user interaction tracking
+function checkTodaysAnnouncementsWithInteraction() {
+    const today = new Date();
+    const todayStr = today.toISOString().split("T")[0];
+    
+    // Check if user has interacted with announcements today
+    const interactionKey = `announcements_interaction_${todayStr}`;
+    const hasInteracted = localStorage.getItem(interactionKey) || sessionStorage.getItem(interactionKey);
+    
+    if (hasInteracted) {
+        return; // Don't show if user has already interacted
+    }
+
+    const todaysAnnouncements = announcementsData.announcements.filter(
+        (announcement) => {
+            const announcementDate = announcement.date.split("T")[0];
+            return announcementDate === todayStr;
+        }
+    );
+
+    if (todaysAnnouncements.length > 0) {
+        showTodaysAnnouncements(todaysAnnouncements);
+    }
+}
+
+// Modified showTodaysAnnouncements to track user interaction
+function showTodaysAnnouncementsWithTracking(announcements) {
+    const modal = document.getElementById("announcement-modal");
+    const modalBody = document.getElementById("announcement-modal-body");
+    const today = new Date().toISOString().split("T")[0];
+    const interactionKey = `announcements_interaction_${today}`;
+
+    modalBody.innerHTML = "";
+
+    announcements.forEach((announcement) => {
+        const announcementDiv = document.createElement("div");
+        announcementDiv.className = "announcement-item";
+        announcementDiv.innerHTML = `
             <h3>${announcement.heading}</h3>
             <p>${announcement.content}</p>
             ${
-              announcement.image
-                ? `<img src="${announcement.image}" alt="${announcement.heading}" style="max-width: 100%; height: auto; margin-top: 10px;">`
-                : ""
+                announcement.image
+                    ? `<img src="${announcement.image}" alt="${announcement.heading}" style="max-width: 100%; height: auto; margin-top: 10px;">`
+                    : ""
             }
-            <small>Posted: ${new Date(
-              announcement.date
-            ).toLocaleDateString()}</small>
-          `;
-          modalBody.appendChild(announcementDiv);
-        });
+            <small>Posted: ${new Date(announcement.date).toLocaleDateString()}</small>
+        `;
+        modalBody.appendChild(announcementDiv);
+    });
 
-        modal.style.display = "block";
-        modal.classList.add("show");
-      }
+    modal.style.display = "block";
+    modal.classList.add("show");
 
+    // Mark as interacted when modal is shown
+    try {
+        localStorage.setItem(interactionKey, "true");
+        sessionStorage.setItem(interactionKey, "true");
+    } catch (error) {
+        if (!window.announcementMemory) {
+            window.announcementMemory = {};
+        }
+        window.announcementMemory[`interaction_${today}`] = true;
+    }
+
+    // Also mark as interacted when user closes the modal
+    const closeHandler = function() {
+        try {
+            localStorage.setItem(interactionKey, "true");
+            sessionStorage.setItem(interactionKey, "true");
+        } catch (error) {
+            if (!window.announcementMemory) {
+                window.announcementMemory = {};
+            }
+            window.announcementMemory[`interaction_${today}`] = true;
+        }
+    };
+
+    // Add close handler to existing close buttons
+    const closeBtn = document.getElementById("announcement-close");
+    if (closeBtn) {
+        closeBtn.addEventListener('click', closeHandler, { once: true });
+    }
+
+    // Add close handler for clicking outside
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            closeHandler();
+        }
+    }, { once: true });
+}
       // Initialize modal
       function initializeModal() {
         const memberModal = document.getElementById("member-modal");
