@@ -7,39 +7,6 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <!-- Login Page -->
-    <div id="loginPage" class="login-container">
-      <form class="login-form" id="loginForm">
-        <h1 class="login-title">Login</h1>
-
-        <div class="form-group">
-          <label class="form-label">Select Family Member:</label>
-          <input
-            type="text"
-            id="usernameSearch"
-            class="username-search"
-            placeholder="Search for family member..."
-            autocomplete="off"
-          />
-          <div id="usernameDropdown" class="username-dropdown"></div>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Password:</label>
-          <input
-            type="password"
-            id="passwordInput"
-            class="password-input"
-            placeholder="Enter password"
-            required
-          />
-        </div>
-
-        <button type="submit" class="login-btn">Login</button>
-        <div id="errorMessage" class="error-message"></div>
-      </form>
-    </div>
-
     <!-- Navigation -->
     <div id="mainContent" class="main-content">
       <nav class="navbar">
@@ -48,7 +15,6 @@
         </div>
       </nav>
 
-      <!-- Button Grid -->
       <!-- Button Grid -->
       <div class="button-grid">
         <div class="grid-btn-container">
@@ -89,6 +55,8 @@
             <img src="/images/gallary.png" alt="gallary" class="btn-icon" />
           </a>
         </div>
+      </div>
+      
       </div>
       <center>
         <h1
@@ -135,258 +103,16 @@
     <script src="data.js"></script>
     <script src="events.js"></script>
     <script>
-      let currentUser = null;
-      let selectedUsername = "";
-
       // Initialize the application
       document.addEventListener("DOMContentLoaded", function () {
-        checkAuth();
-        setupLogin();
-        populateUsernames();
+        initializeApp();
       });
 
-      function checkAuth() {
-        const user = sessionStorage.getItem("currentUser");
-        if (user) {
-          currentUser = JSON.parse(user);
-          showMainContent();
-        } else {
-          showLoginPage();
-        }
-      }
-      // Replace the existing checkAuth() function with this updated version
-      function checkAuth() {
-        const userDataStr = localStorage.getItem("currentUser");
-        if (userDataStr) {
-          try {
-            const userData = JSON.parse(userDataStr);
-
-            // Check if the stored data has an expiration time
-            if (userData.expiresAt && Date.now() > userData.expiresAt) {
-              // Data has expired, remove it
-              localStorage.removeItem("currentUser");
-              showLoginPage();
-              return;
-            }
-
-            // If no expiration time exists (for backward compatibility) or not expired
-            currentUser = userData.user || userData; // Handle both old and new format
-            showMainContent();
-          } catch (e) {
-            // If there's an error parsing, clear the storage
-            localStorage.removeItem("currentUser");
-            showLoginPage();
-          }
-        } else {
-          showLoginPage();
-        }
-      }
-
-      // Replace the existing handleLogin() function with this updated version
-      function handleLogin(e) {
-        e.preventDefault();
-
-        const password = document.getElementById("passwordInput").value;
-        const errorDiv = document.getElementById("errorMessage");
-
-        if (!selectedUsername) {
-          showError("Please select a family member");
-          return;
-        }
-
-        // Simple password verification (password: "family123")
-        const hashedPassword = simpleHash(password);
-        if (password === "family123" || hashedPassword === PASSWORD_HASH) {
-          const user = familyData.family.find(
-            (member) => member.name === selectedUsername
-          );
-          if (user) {
-            currentUser = user;
-
-            // Create user data with expiration (7 days from now)
-            const userData = {
-              user: user,
-              expiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
-            };
-
-            localStorage.setItem("currentUser", JSON.stringify(userData));
-            showMainContent();
-            errorDiv.textContent = "";
-          } else {
-            showError("Invalid username");
-          }
-        } else {
-          showError("Invalid password");
-        }
-      }
-
-      // Replace the existing logout() function with this updated version
-      function logout() {
-        localStorage.removeItem("currentUser");
-        currentUser = null;
-        selectedUsername = "";
-        document.getElementById("loginForm").reset();
-        showLoginPage();
-      }
-
-      // Add this new function to check and clean expired data periodically
-      function cleanupExpiredAuth() {
-        const userDataStr = localStorage.getItem("currentUser");
-        if (userDataStr) {
-          try {
-            const userData = JSON.parse(userDataStr);
-            if (userData.expiresAt && Date.now() > userData.expiresAt) {
-              localStorage.removeItem("currentUser");
-            }
-          } catch (e) {
-            localStorage.removeItem("currentUser");
-          }
-        }
-      }
-
-      // Update the DOMContentLoaded event listener to include cleanup
-      document.addEventListener("DOMContentLoaded", function () {
-        cleanupExpiredAuth(); // Clean up expired auth data first
-        checkAuth();
-        setupLogin();
-        populateUsernames();
-      });
-
-      function showLoginPage() {
-        document.getElementById("loginPage").style.display = "flex";
-        document.getElementById("mainContent").style.display = "none";
-      }
-
-      function showMainContent() {
-        document.getElementById("loginPage").style.display = "none";
-        document.getElementById("mainContent").style.display = "block";
+      function initializeApp() {
         renderFamilyTree();
         checkTodaysAnnouncements();
-      }
-
-      function setupLogin() {
-        const loginForm = document.getElementById("loginForm");
-        const usernameSearch = document.getElementById("usernameSearch");
-        const dropdown = document.getElementById("usernameDropdown");
-
-        loginForm.addEventListener("submit", handleLogin);
-
-        usernameSearch.addEventListener("input", function () {
-          const query = this.value.toLowerCase();
-          filterUsernames(query);
-        });
-
-        usernameSearch.addEventListener("focus", function () {
-          dropdown.style.display = "block";
-          filterUsernames("");
-        });
-
-        // Close dropdown when clicking outside
-        document.addEventListener("click", function (e) {
-          if (
-            !usernameSearch.contains(e.target) &&
-            !dropdown.contains(e.target)
-          ) {
-            dropdown.style.display = "none";
-          }
-        });
-      }
-
-      function populateUsernames() {
-        const dropdown = document.getElementById("usernameDropdown");
-
-        // Sort family members by ID
-        const sortedFamily = [...familyData.family].sort((a, b) => a.id - b.id);
-
-        dropdown.innerHTML = "";
-        sortedFamily.forEach((member) => {
-          const option = document.createElement("div");
-          option.className = "username-option";
-          option.textContent = member.name;
-          option.addEventListener("click", function () {
-            selectUsername(member.name);
-          });
-          dropdown.appendChild(option);
-        });
-      }
-
-      function filterUsernames(query) {
-        const dropdown = document.getElementById("usernameDropdown");
-        const options = dropdown.querySelectorAll(".username-option");
-
-        let hasVisibleOptions = false;
-        options.forEach((option) => {
-          const name = option.textContent.toLowerCase();
-          if (name.includes(query)) {
-            option.style.display = "block";
-            hasVisibleOptions = true;
-          } else {
-            option.style.display = "none";
-          }
-        });
-
-        dropdown.style.display = hasVisibleOptions ? "block" : "none";
-      }
-
-      function selectUsername(username) {
-        selectedUsername = username;
-        document.getElementById("usernameSearch").value = username;
-        document.getElementById("usernameDropdown").style.display = "none";
-        document.getElementById("passwordInput").focus();
-      }
-
-      function handleLogin(e) {
-        e.preventDefault();
-
-        const password = document.getElementById("passwordInput").value;
-        const errorDiv = document.getElementById("errorMessage");
-
-        if (!selectedUsername) {
-          showError("Please select a family member");
-          return;
-        }
-
-        // Simple password verification (password: "family123")
-        const hashedPassword = simpleHash(password);
-        if (password === "family123" || hashedPassword === PASSWORD_HASH) {
-          const user = familyData.family.find(
-            (member) => member.name === selectedUsername
-          );
-          if (user) {
-            currentUser = user;
-            sessionStorage.setItem("currentUser", JSON.stringify(user));
-            showMainContent();
-            errorDiv.textContent = "";
-          } else {
-            showError("Invalid username");
-          }
-        } else {
-          showError("Invalid password");
-        }
-      }
-
-      function showError(message) {
-        document.getElementById("errorMessage").textContent = message;
-      }
-
-      function logout() {
-        sessionStorage.removeItem("currentUser");
-        currentUser = null;
-        selectedUsername = "";
-        document.getElementById("loginForm").reset();
-        showLoginPage();
-      }
-
-      // Simple hash function (same as in data.js)
-      function simpleHash(str) {
-        let hash = 0;
-        if (str.length === 0) return hash;
-        for (let i = 0; i < str.length; i++) {
-          const char = str.charCodeAt(i);
-          hash = (hash << 5) - hash + char;
-          hash = hash & hash;
-        }
-        return Math.abs(hash).toString(16);
+        initializeTreeControls();
+        initializeModal();
       }
 
       // Global variables
@@ -399,12 +125,6 @@
       let treeHeight = 0;
       let touchStartTime = 0;
       let touchMoved = false;
-
-      // Initialize app
-      document.addEventListener("DOMContentLoaded", function () {
-        initializeTreeControls();
-        initializeModal();
-      });
 
       // Calculate age
       function calculateAge(birthDate, deathDate = null) {
@@ -661,6 +381,7 @@
 
         return card;
       }
+
       function initializeTreeControls() {
         document.getElementById("zoom-in").onclick = () => {
           zoomLevel *= 1.2;
@@ -985,11 +706,15 @@
         treeSvg.style.transformOrigin = "0 0";
       }
 
-      // Check today's announcements
       function checkTodaysAnnouncements() {
         const today = new Date();
         const todayStr = today.toISOString().split("T")[0]; // YYYY-MM-DD format
-        const currentHour = today.getHours();
+
+        // Create a unique session key for today's announcements
+        const sessionKey = `announcements_shown_${todayStr}`;
+
+        // Check if announcements have already been shown today in this session
+        const alreadyShown = sessionStorage.getItem(sessionKey);
 
         // Check if there are announcements for today
         const todaysAnnouncements = announcementsData.announcements.filter(
@@ -1007,19 +732,12 @@
             notificationDot.style.display = "block";
           }
 
-          // Create unique keys for morning (9am-6pm) and evening (6pm-9am) sessions
-          const sessionKey =
-            currentHour >= 9 && currentHour < 18 ? "morning" : "evening";
-          const storageKey = `announcements_shown_${todayStr}_${sessionKey}`;
-
-          // Check if announcements were already shown for this session today
-          if (sessionStorage.getItem(storageKey)) {
-            return; // Already shown for this time period today
+          // Show announcements only if not already shown in this session
+          if (!alreadyShown) {
+            showTodaysAnnouncements(todaysAnnouncements);
+            // Mark as shown for this session
+            sessionStorage.setItem(sessionKey, "true");
           }
-
-          showTodaysAnnouncements(todaysAnnouncements);
-          // Mark as shown for this session
-          sessionStorage.setItem(storageKey, "true");
         } else {
           // Hide notification dot if no announcements
           if (notificationDot) {
@@ -1112,6 +830,7 @@
           }
         });
       }
+
       // Show member details
       function showMemberDetails(member) {
         const modal = document.getElementById("member-modal");
