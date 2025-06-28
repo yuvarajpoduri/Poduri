@@ -487,7 +487,7 @@ const familyData = {
       parentId: 19,
       spouseId: null,
       generation: 4,
-      avatar: "PSP",
+      avatar: "https://res.cloudinary.com/dv4rmttv6/image/upload/v1751103832/SAVE_20240725_190616_exhspw.jpg",
     },
     {
       id: 45,
