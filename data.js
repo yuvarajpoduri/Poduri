@@ -119,7 +119,8 @@ const familyData = {
       parentId: 3,
       spouseId: 12,
       generation: 3,
-      avatar: "PK",
+      avatar:
+        "https://res.cloudinary.com/dv4rmttv6/image/upload/v1751094831/krishna_lpkq2s.jpg",
     },
     {
       id: 12,
@@ -244,25 +245,25 @@ const familyData = {
     },
     {
       id: 23,
-      name: "Poduri Sri Venkata Narasimha Siva Prasad",
-      birthDate: "1979-01-08",
+      name: "Poduri Siva Prasad",
+      birthDate: "1975-01-08",
       deathDate: null,
       gender: "male",
       parentId: 7,
       spouseId: 24,
       generation: 3,
-      avatar: "PSVNSP",
+      avatar: "PSP",
     },
     {
       id: 24,
-      name: "Poduri Lakshmi",
-      birthDate: "1987-05-18",
+      name: "Poduri Jaya Lakshmi",
+      birthDate: "1974-05-18",
       deathDate: null,
       gender: "female",
       parentId: null,
       spouseId: 23,
       generation: 3,
-      avatar: "PL",
+      avatar: "PJL",
     },
     {
       id: 25,
@@ -310,8 +311,8 @@ const familyData = {
     },
     {
       id: 29,
-      name: "Poduri Kali",
-      birthDate: "",
+      name: "Poduri Kali Vara Prasad",
+      birthDate: "1988-06-02",
       deathDate: null,
       gender: "male",
       parentId: 9,
@@ -322,7 +323,7 @@ const familyData = {
     {
       id: 30,
       name: "Poduri Lavanya",
-      birthDate: "",
+      birthDate: "1992-12-06",
       deathDate: null,
       gender: "female",
       parentId: null,
@@ -354,17 +355,6 @@ const familyData = {
     },
     {
       id: 33,
-      name: "Poduri Lakshmi",
-      birthDate: "1991-03-06",
-      deathDate: null,
-      gender: "male",
-      parentId: 11,
-      spouseId: null,
-      generation: 4,
-      avatar: "PL",
-    },
-    {
-      id: 34,
       name: "Poduri Kumari",
       birthDate: "1989-01-20",
       deathDate: null,
@@ -372,7 +362,20 @@ const familyData = {
       parentId: 11,
       spouseId: null,
       generation: 4,
-      avatar: "PK",
+      avatar:
+        "https://res.cloudinary.com/dv4rmttv6/image/upload/v1751094831/kumari_frmg5y.jpg",
+    },
+    {
+      id: 34,
+      name: "Poduri Lakshmi",
+      birthDate: "1991-03-06",
+      deathDate: null,
+      gender: "male",
+      parentId: 11,
+      spouseId: null,
+      generation: 4,
+      avatar:
+        "https://res.cloudinary.com/dv4rmttv6/image/upload/v1751094831/lakshmiakka_fpserf.jpg",
     },
     {
       id: 35,
@@ -383,7 +386,8 @@ const familyData = {
       parentId: 11,
       spouseId: 36,
       generation: 4,
-      avatar: "PM",
+      avatar:
+        "https://res.cloudinary.com/dv4rmttv6/image/upload/v1751094830/babi_yp8yfv.jpg",
     },
     {
       id: 36,
@@ -394,7 +398,8 @@ const familyData = {
       parentId: null,
       spouseId: 35,
       generation: 4,
-      avatar: "PM",
+      avatar:
+        "https://res.cloudinary.com/dv4rmttv6/image/upload/v1751094837/pavani_sprtoe.jpg",
     },
     {
       id: 37,
@@ -443,7 +448,7 @@ const familyData = {
     {
       id: 41,
       name: "Poduri Kala",
-      birthDate: "2002-07-20",
+      birthDate: "",
       deathDate: null,
       gender: "female",
       parentId: 17,
@@ -625,7 +630,8 @@ const familyData = {
       parentId: 35,
       spouseId: null,
       generation: 5,
-      avatar: "",
+      avatar:
+        "https://res.cloudinary.com/dv4rmttv6/image/upload/v1751094607/pujya_bq9rzs.jpg",
     },
     {
       id: 58,
@@ -636,7 +642,8 @@ const familyData = {
       parentId: 35,
       spouseId: null,
       generation: 5,
-      avatar: "",
+      avatar:
+        "https://res.cloudinary.com/dv4rmttv6/image/upload/v1751094832/chanya_uxtzbr.jpg",
     },
   ],
 };
