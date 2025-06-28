@@ -208,7 +208,7 @@ const familyData = {
       parentId: 5,
       spouseId: 20,
       generation: 3,
-      avatar: "PA",
+      avatar: "https://res.cloudinary.com/dv4rmttv6/image/upload/v1751111853/IMG_20250628_172529_jjzgl8.jpg",
     },
     {
       id: 20,
@@ -447,14 +447,14 @@ const familyData = {
     },
     {
       id: 41,
-      name: "Poduri Kala",
+      name: "Poduri Surya Kala",
       birthDate: "",
       deathDate: null,
       gender: "female",
       parentId: 17,
       spouseId: null,
       generation: 4,
-      avatar: "PK",
+      avatar: "https://res.cloudinary.com/dv4rmttv6/image/upload/v1751111847/IMG-20250628-WA0013_bparcf.jpg",
     },
     {
       id: 42,
@@ -498,7 +498,7 @@ const familyData = {
       parentId: 21,
       spouseId: null,
       generation: 4,
-      avatar: "PYDP",
+      avatar: "https://res.cloudinary.com/dv4rmttv6/image/upload/v1751111858/Screenshot_2025-06-28-16-39-53-080_com.miui.gallery_hfd4vu.jpg",
     },
     {
       id: 46,
