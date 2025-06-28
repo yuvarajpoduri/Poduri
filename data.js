@@ -142,7 +142,7 @@ const familyData = {
       parentId: 3,
       spouseId: 14,
       generation: 3,
-      avatar: "PLN",
+      avatar: "https://res.cloudinary.com/dv4rmttv6/image/upload/v1751105581/IMG-20250628-WA0003_ybu2au.jpg",
     },
     {
       id: 14,
@@ -153,7 +153,7 @@ const familyData = {
       parentId: null,
       spouseId: 13,
       generation: 3,
-      avatar: "PVL",
+      avatar: "https://res.cloudinary.com/dv4rmttv6/image/upload/v1751105582/IMG-20250628-WA0001_qumq4v.jpg",
     },
     {
       id: 15,
@@ -164,7 +164,7 @@ const familyData = {
       parentId: 3,
       spouseId: 16,
       generation: 3,
-      avatar: "https://res.cloudinary.com/dv4rmttv6/image/upload/v1751105581/IMG-20250628-WA0003_ybu2au.jpg",
+      avatar: "",
     },
     {
       id: 16,
@@ -175,7 +175,7 @@ const familyData = {
       parentId: null,
       spouseId: 15,
       generation: 3,
-      avatar: "https://res.cloudinary.com/dv4rmttv6/image/upload/v1751105582/IMG-20250628-WA0001_qumq4v.jpg",
+      avatar: "",
     },
     {
       id: 17,
