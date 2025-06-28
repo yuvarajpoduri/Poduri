@@ -164,7 +164,7 @@ const familyData = {
       parentId: 3,
       spouseId: 16,
       generation: 3,
-      avatar: "PM",
+      avatar: "https://res.cloudinary.com/dv4rmttv6/image/upload/v1751105581/IMG-20250628-WA0003_ybu2au.jpg",
     },
     {
       id: 16,
@@ -175,7 +175,7 @@ const familyData = {
       parentId: null,
       spouseId: 15,
       generation: 3,
-      avatar: "PVL",
+      avatar: "https://res.cloudinary.com/dv4rmttv6/image/upload/v1751105582/IMG-20250628-WA0001_qumq4v.jpg",
     },
     {
       id: 17,
@@ -410,7 +410,7 @@ const familyData = {
       parentId: 13,
       spouseId: null,
       generation: 4,
-      avatar: "PM",
+      avatar: "https://res.cloudinary.com/dv4rmttv6/image/upload/v1751105582/IMG-20250628-WA0000_src81a.jpg",
     },
     {
       id: 38,
@@ -432,7 +432,7 @@ const familyData = {
       parentId: 15,
       spouseId: null,
       generation: 4,
-      avatar: "PS",
+      avatar: "https://res.cloudinary.com/dv4rmttv6/image/upload/v1751105581/IMG-20250628-WA0005_acjpg3.jpg",
     },
     {
       id: 40,
@@ -465,12 +465,12 @@ const familyData = {
       parentId: 17,
       spouseId: null,
       generation: 4,
-      avatar: "PRM",
+      avatar: "https://res.cloudinary.com/dv4rmttv6/image/upload/v1751105582/IMG_20250628_153929_o8f2wg.jpg",
     },
     {
       id: 43,
       name: "Poduri Manikanta",
-      birthDate: "",
+      birthDate: "2003-07-31",
       deathDate: null,
       gender: "male",
       parentId: 19,
@@ -509,7 +509,7 @@ const familyData = {
       parentId: 21,
       spouseId: null,
       generation: 4,
-      avatar: "PHSM",
+      avatar: "https://res.cloudinary.com/dv4rmttv6/image/upload/v1751105581/IMG-20250628-WA0004_vwvlhu.jpg",
     },
     {
       id: 47,
