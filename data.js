@@ -186,7 +186,7 @@ const familyData = {
       parentId: 5,
       spouseId: 18,
       generation: 3,
-      avatar: "PS",
+      avatar: "https://res.cloudinary.com/dv4rmttv6/image/upload/v1751128283/IMG_20250628_215938_nmfioq.jpg",
     },
     {
       id: 18,
@@ -197,7 +197,7 @@ const familyData = {
       parentId: null,
       spouseId: 17,
       generation: 3,
-      avatar: "PM",
+      avatar: "https://res.cloudinary.com/dv4rmttv6/image/upload/v1751128282/IMG_20250628_220000_ujw0ed.jpg",
     },
     {
       id: 19,
