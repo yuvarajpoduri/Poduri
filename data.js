@@ -230,7 +230,7 @@ const familyData = {
       parentId: 5,
       spouseId: 22,
       generation: 3,
-      avatar: "PVSPR",
+      avatar: "https://res.cloudinary.com/dv4rmttv6/image/upload/v1751126673/IMG_20250628_213359_zsoyoo.png",
     },
     {
       id: 22,
