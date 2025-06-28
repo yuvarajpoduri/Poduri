@@ -11,6 +11,7 @@
         margin: 0;
         padding: 20px;
         color: #000;
+        padding-top: 100px;
       }
 
       h1 {
@@ -54,11 +55,270 @@
         border-left: 1px dashed #000;
       }
 
-      @media (max-width: 600px) {
+      /* Popup Styles */
+      .popup-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 2000;
+      }
+
+      .popup-content {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        max-width: 600px;
+        width: 90%;
+        max-height: 80vh;
+        overflow-y: auto;
+        position: relative;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        animation: popupSlide 0.3s ease-out;
+      }
+
+      @keyframes popupSlide {
+        from {
+          transform: translateY(-50px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      .popup-close {
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #666;
+        transition: color 0.3s;
+        z-index: 1;
+      }
+
+      .popup-close:hover {
+        color: #000;
+      }
+
+      .member-info {
+        width: 100%;
+      }
+
+      .details-with-avatar {
+        display: flex;
+        gap: 20px;
+        align-items: flex-start;
+      }
+
+      .details-section {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .avatar-container {
+        flex-shrink: 0;
+        width: 120px;
+        height: 120px;
+        background: #f0f0f0;
+        border-radius: 15px;
+        padding: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid #ddd;
+      }
+
+      .avatar-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+      }
+
+      .avatar-image:hover {
+        transform: scale(1.05);
+      }
+
+      .avatar-iframe {
+        width: 100%;
+        height: 100%;
+        border-radius: 10px;
+        border: none;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+      }
+
+      .avatar-iframe:hover {
+        transform: scale(1.05);
+      }
+
+      .avatar-placeholder {
+        color: #999;
+        text-align: center;
+        font-size: 14px;
+        line-height: 1.4;
+      }
+
+      .member-details h2 {
+        margin-top: 0;
+        margin-bottom: 20px;
+        color: #333;
+        border-bottom: 2px solid #000;
+        padding-bottom: 10px;
+      }
+
+      .detail-row {
+        display: flex;
+        margin-bottom: 15px;
+        padding: 10px;
+        background: #f8f8f8;
+        border-radius: 8px;
+      }
+
+      .detail-label {
+        font-weight: bold;
+        min-width: 120px;
+        color: #555;
+      }
+
+      .detail-value {
+        color: #000;
+        flex: 1;
+      }
+
+      .family-links {
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+      }
+
+      .family-links h3 {
+        margin-bottom: 10px;
+        color: #333;
+      }
+
+      .family-link {
+        display: inline-block;
+        background: #000;
+        color: white;
+        padding: 5px 12px;
+        border-radius: 20px;
+        margin: 3px;
+        cursor: pointer;
+        transition: background 0.3s;
+        font-size: 0.9em;
+      }
+
+      .family-link:hover {
+        background: #333;
+      }
+
+      /* Image Modal Styles */
+      .image-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.9);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 3000;
+        animation: fadeIn 0.3s ease-out;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      .image-modal-content {
+        position: relative;
+        max-width: 90%;
+        max-height: 90%;
+        width: auto;
+        height: auto;
+      }
+
+      .image-modal img {
+        width: 100%;
+        height: 100%;
+        max-width: 90vw;
+        max-height: 90vh;
+        object-fit: contain;
+        border: none;
+        border-radius: 8px;
+      }
+
+      .image-modal-close {
+        position: absolute;
+        top: -40px;
+        right: -40px;
+        background: rgba(255, 255, 255, 0.9);
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+        cursor: pointer;
+        color: #333;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .image-modal-close:hover {
+        background: white;
+        transform: scale(1.1);
+      }
+
+      @media (max-width: 768px) {
         h1 {
           font-size: 20px;
         }
+
+        .popup-content {
+          padding: 20px;
+          margin: 10px;
+        }
+
+        .details-with-avatar {
+          gap: 15px;
+        }
+
+        .avatar-container {
+          width: 80px;
+          height: 80px;
+        }
+
+        .detail-row {
+          flex-direction: column;
+        }
+
+        .detail-label {
+          min-width: auto;
+          margin-bottom: 5px;
+        }
       }
+
       /* Navigation */
       .navbar {
         background: black;
@@ -137,6 +397,7 @@
         border-color: white;
         box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
       }
+
       a {
         color: white;
         text-decoration: none;
@@ -149,8 +410,33 @@
         <center><h1 class="nav-logo">Poduri's</h1></center>
       </div>
     </nav>
+
     <h1>Family Tree by Generations</h1>
     <div id="family-tree"></div>
+
+    <!-- Popup Modal -->
+    <div id="popup-overlay" class="popup-overlay">
+      <div class="popup-content">
+        <button class="popup-close" onclick="closePopup()">&times;</button>
+        <div class="member-info">
+          <div id="member-details" class="member-details">
+            <!-- Member details will be populated here -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Image Modal -->
+    <div id="image-modal" class="image-modal">
+      <div class="image-modal-content">
+        <button class="image-modal-close" onclick="closeImageModal()">
+          &times;
+        </button>
+        <div id="image-modal-media">
+          <!-- Image or iframe will be populated here -->
+        </div>
+      </div>
+    </div>
     <script src="data.js"></script>
     <script>
       const treeContainer = document.getElementById("family-tree");
@@ -183,6 +469,7 @@
             : null;
 
           let boxText = "";
+          let memberIds = [member.id];
 
           if (spouse && !processed.has(spouse.id)) {
             const [first, second] =
@@ -191,6 +478,7 @@
             boxText = `${first.name} ${getLifeStatus(first)}, ${
               second.name
             } ${getLifeStatus(second)}`;
+            memberIds = [first.id, second.id];
             processed.add(first.id);
             processed.add(second.id);
           } else {
@@ -202,25 +490,62 @@
           box.className = "member-box";
           box.textContent = boxText;
 
+          // Add click event for popup
           box.addEventListener("click", (e) => {
             e.stopPropagation();
+
+            // Check if clicking on children container
+            if (e.target.closest(".children-container")) {
+              return;
+            }
+
+            // Toggle children if they exist and are already displayed
             if (box.querySelector(".children-container")) {
               const cc = box.querySelector(".children-container");
+              if (e.target === cc || cc.contains(e.target)) {
+                return;
+              }
               cc.style.display = cc.style.display === "none" ? "block" : "none";
               return;
             }
 
+            // Show popup for main member
+            if (memberIds.length === 1) {
+              showMemberPopup(member);
+            } else {
+              // For couples, show popup for the clicked member
+              showMemberPopup(member);
+            }
+          });
+
+          // Add double-click event for children
+          box.addEventListener("dblclick", (e) => {
+            e.stopPropagation();
+
             const children = familyData.family.filter(
-              (m) => m.parentId === member.id
+              (m) =>
+                m.parentId === member.id || (spouse && m.parentId === spouse.id)
             );
-            if (children.length > 0) {
+
+            if (
+              children.length > 0 &&
+              !box.querySelector(".children-container")
+            ) {
               const cc = document.createElement("div");
               cc.className = "children-container";
+
               children.forEach((child) => {
                 const childText = `${child.name} ${getLifeStatus(child)}`;
                 const childBox = document.createElement("div");
                 childBox.className = "member-box";
                 childBox.textContent = childText;
+
+                // Add click event for child popup
+                childBox.addEventListener("click", (e) => {
+                  e.stopPropagation();
+                  showMemberPopup(child);
+                });
+
                 cc.appendChild(childBox);
               });
               box.appendChild(cc);
@@ -245,6 +570,219 @@
           new Date().getFullYear() - new Date(member.birthDate).getFullYear();
         return `(${age} Years)`;
       }
+
+      function openImageModal(src, alt = "") {
+        const modal = document.getElementById("image-modal");
+        const mediaContainer = document.getElementById("image-modal-media");
+
+        mediaContainer.innerHTML = `<img src="${src}" alt="${alt}">`;
+
+        modal.style.display = "flex";
+        document.body.style.overflow = "hidden";
+      }
+
+      function closeImageModal() {
+        const modal = document.getElementById("image-modal");
+        modal.style.display = "none";
+        document.body.style.overflow = "auto";
+      }
+
+      function formatDate(dateString) {
+        if (!dateString) return "Unknown";
+
+        const date = new Date(dateString);
+        const months = [
+          "January",
+          "February",
+          "March",
+          "April",
+          "May",
+          "June",
+          "July",
+          "August",
+          "September",
+          "October",
+          "November",
+          "December",
+        ];
+
+        const month = months[date.getMonth()];
+        const day = date.getDate();
+        const year = date.getFullYear();
+
+        return `${month} ${day}, ${year}`;
+      }
+
+      function showMemberPopup(member) {
+        const popup = document.getElementById("popup-overlay");
+        const detailsContainer = document.getElementById("member-details");
+
+        // Find related family members
+        const spouse = member.spouseId
+          ? familyData.family.find((m) => m.id === member.spouseId)
+          : null;
+        const parent = member.parentId
+          ? familyData.family.find((m) => m.id === member.parentId)
+          : null;
+        const children = familyData.family.filter(
+          (m) => m.parentId === member.id
+        );
+        const siblings = member.parentId
+          ? familyData.family.filter(
+              (m) => m.parentId === member.parentId && m.id !== member.id
+            )
+          : [];
+
+        // Calculate age
+        let ageText = "Unknown";
+        if (member.birthDate) {
+          const birthYear = new Date(member.birthDate).getFullYear();
+          const currentYear = member.deathDate
+            ? new Date(member.deathDate).getFullYear()
+            : new Date().getFullYear();
+          ageText = `${currentYear - birthYear} years`;
+          if (member.deathDate) {
+            ageText += " (at death)";
+          }
+        }
+
+        detailsContainer.innerHTML = `
+          <h2>${member.name}</h2>
+
+          <div class="details-with-avatar">
+            <div class="details-section">
+              <div class="detail-row">
+                <div class="detail-label">Birth Date:</div>
+                <div class="detail-value">${formatDate(member.birthDate)}</div>
+              </div>
+
+              ${
+                member.deathDate
+                  ? `
+              <div class="detail-row">
+                <div class="detail-label">Death Date:</div>
+                <div class="detail-value">${formatDate(member.deathDate)}</div>
+              </div>
+              `
+                  : ""
+              }
+
+              <div class="detail-row">
+                <div class="detail-label">Age:</div>
+                <div class="detail-value">${ageText}</div>
+              </div>
+
+              <div class="detail-row">
+                <div class="detail-label">Generation:</div>
+                <div class="detail-value">${member.generation}</div>
+              </div>
+
+              <div class="detail-row">
+                <div class="detail-label">Status:</div>
+                <div class="detail-value">${
+                  member.deathDate ? "Deceased" : "Living"
+                }</div>
+              </div>
+            </div>
+
+            <div class="avatar-container">
+              ${
+                member.avatar
+                  ? `<img src="${member.avatar}" alt="${member.name}" class="avatar-image" onclick="openImageModal('${member.avatar}', '${member.name}')" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                   <div class="avatar-placeholder" style="display: none;">No Image Available</div>`
+                  : `<div class="avatar-placeholder">No Image Available</div>`
+              }
+            </div>
+          </div>
+
+          ${
+            spouse || parent || children.length > 0 || siblings.length > 0
+              ? `
+          <div class="family-links">
+            ${
+              spouse
+                ? `
+            <h3>Spouse</h3>
+            <span class="family-link" onclick="showMemberPopup(familyData.family.find(m => m.id === ${spouse.id}))">${spouse.name}</span>
+            `
+                : ""
+            }
+
+            ${
+              parent
+                ? `
+            <h3>Parent</h3>
+            <span class="family-link" onclick="showMemberPopup(familyData.family.find(m => m.id === ${parent.id}))">${parent.name}</span>
+            `
+                : ""
+            }
+
+            ${
+              children.length > 0
+                ? `
+            <h3>Children</h3>
+            ${children
+              .map(
+                (child) =>
+                  `<span class="family-link" onclick="showMemberPopup(familyData.family.find(m => m.id === ${child.id}))">${child.name}</span>`
+              )
+              .join("")}
+            `
+                : ""
+            }
+
+            ${
+              siblings.length > 0
+                ? `
+            <h3>Siblings</h3>
+            ${siblings
+              .map(
+                (sibling) =>
+                  `<span class="family-link" onclick="showMemberPopup(familyData.family.find(m => m.id === ${sibling.id}))">${sibling.name}</span>`
+              )
+              .join("")}
+            `
+                : ""
+            }
+          </div>
+          `
+              : ""
+          }
+        `;
+
+        popup.style.display = "flex";
+        document.body.style.overflow = "hidden";
+      }
+
+      function closePopup() {
+        const popup = document.getElementById("popup-overlay");
+        popup.style.display = "none";
+        document.body.style.overflow = "auto";
+      }
+
+      // Close popup when clicking outside
+      document
+        .getElementById("popup-overlay")
+        .addEventListener("click", (e) => {
+          if (e.target.id === "popup-overlay") {
+            closePopup();
+          }
+        });
+
+      // Close popup with Escape key
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          closePopup();
+          closeImageModal();
+        }
+      });
+
+      // Close image modal when clicking outside
+      document.getElementById("image-modal").addEventListener("click", (e) => {
+        if (e.target.id === "image-modal") {
+          closeImageModal();
+        }
+      });
     </script>
   </body>
 </html>
