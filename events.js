@@ -31,6 +31,16 @@ const announcementsData = {
       date: "2025-06-28T10:30:00Z",
       timestamp: "2025-06-28T10:30:00Z",
     },
+    {
+  id: 4,
+  heading: "🎬 New Feature Drop: Reels are Here!",
+  content:
+    "Hey fam! ✨ We’ve just rolled out an exciting new *Reels* feature in our family app! Now you can upload and enjoy short videos (up to **1 minute** long and **50MB** in size). Whether it’s a cute baby moment, a throwback clip, or a dance challenge—share it all! 🕺💃\n\nFeatures include **pause/play**, **mute/unmute**, and the ability to **like ❤️** and **comment 💬** on each reel. Let’s bring our memories to life, one clip at a time! 📹🎉",
+  image: "https://resource.flexclip.com/pages/learn-center/cover/upload-reels-on-instagram-from-pc.png?v=1", 
+  date: "2025-06-29T08:30:00Z",
+  timestamp: "2025-06-29T08:30:00Z"
+}
+
   ],
 };
 
