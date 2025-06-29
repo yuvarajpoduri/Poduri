@@ -39,6 +39,15 @@ const announcementsData = {
   image: "https://resource.flexclip.com/pages/learn-center/cover/upload-reels-on-instagram-from-pc.png?v=1", 
   date: "2025-06-29T08:30:00Z",
   timestamp: "2025-06-29T08:30:00Z"
+},
+{
+  id: 5,
+  heading: "🌳 8 Generations of Legacy Unveiled!",
+  content:
+    "Big news, fam! 🥳 We’ve added even *more* family member details—right from the roots up to an amazing 8 generations! 📜👨‍👩‍👧‍👦 Now you can explore the entire family tree like never before and discover where you truly come from. ❤️ Dive into the legacy!",
+  image: "https://images.app.goo.gl/oxCFuybrH1DCb5947",
+  date: "2025-06-29T15:30:00Z",
+  timestamp: "2025-06-29T15:30:00Z",
 }
 
   ],
